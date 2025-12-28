@@ -6,6 +6,7 @@ namespace QuanLyCuaHangRuou
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("vw_TonKho")]
     public partial class vw_TonKho
     {
         [Key]
@@ -20,26 +21,10 @@ namespace QuanLyCuaHangRuou
 
         [Key]
         [Column(Order = 2)]
-        [StringLength(100)]
-        public string TenLoai { get; set; }
-
-        [Key]
-        [Column(Order = 3)]
         public decimal DonGia { get; set; }
 
         [Key]
-        [Column(Order = 4)]
-        public decimal SoLuongTon { get; set; }
-
-        [Key]
-        [Column(Order = 5)]
-        [StringLength(20)]
-        public string DonViTinh { get; set; }
-
-        [StringLength(50)]
-        public string TrangThai { get; set; }
-
-        [StringLength(500)]
-        public string HinhPath { get; set; }
+        [Column(Order = 3)]
+        public int SoLuongTon { get; set; }
     }
 }

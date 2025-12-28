@@ -13,7 +13,7 @@ namespace QuanLyCuaHangRuou.DAL
         {
             public string MaDoUong { get; set; }
             public decimal DonGia { get; set; }
-            public decimal SoLuong { get; set; }
+            public int SoLuong { get; set; }
         }
 
         /// <summary>
@@ -23,19 +23,19 @@ namespace QuanLyCuaHangRuou.DAL
         {
             // Validate input truoc khi truy cap DB
             if (string.IsNullOrWhiteSpace(maHd))
-                throw new ArgumentException("Mã hóa đơn không hợp lệ");
+                throw new ArgumentException("Ma hoa don khong hop le");
             if (items == null || items.Count == 0)
-                throw new ArgumentException("Giỏ hàng trống");
+                throw new ArgumentException("Gio hang trong");
 
             // Validate tung item
             foreach (var item in items)
             {
                 if (string.IsNullOrWhiteSpace(item.MaDoUong))
-                    throw new ArgumentException("Mã đổ uống không hợp lệ");
+                    throw new ArgumentException("Ma do uong khong hop le");
                 if (item.SoLuong <= 0)
-                    throw new ArgumentException("Số lượng phải > 0");
+                    throw new ArgumentException("So luong phai > 0");
                 if (item.DonGia < 0)
-                    throw new ArgumentException("Đơn giá không hợp lệ");
+                    throw new ArgumentException("Don gia khong hop le");
             }
 
             Model1 db = null;
@@ -48,7 +48,7 @@ namespace QuanLyCuaHangRuou.DAL
 
                 // Kiem tra ma HD da ton tai
                 if (db.HoaDons.Any(x => x.MaHD == maHd))
-                    throw new InvalidOperationException("Mã hóa đơn đã tồn tại");
+                    throw new InvalidOperationException("Ma hoa don da ton tai");
 
                 // Lay danh sach do uong
                 var maList = items.Select(x => x.MaDoUong).Distinct().ToList();
@@ -59,9 +59,9 @@ namespace QuanLyCuaHangRuou.DAL
                 {
                     var du = doUongs.FirstOrDefault(x => x.MaDoUong == it.MaDoUong);
                     if (du == null)
-                        throw new InvalidOperationException($"Không tìm thấy đổ uống: {it.MaDoUong}");
+                        throw new InvalidOperationException($"Khong tim thay do uong: {it.MaDoUong}");
                     if (du.SoLuongTon < it.SoLuong)
-                        throw new InvalidOperationException($"Tồn kho không đủ cho {du.TenDoUong}. Còn: {du.SoLuongTon}");
+                        throw new InvalidOperationException($"Ton kho khong du cho {du.TenDoUong}. Con: {du.SoLuongTon}");
                 }
 
                 // Tinh tong tien

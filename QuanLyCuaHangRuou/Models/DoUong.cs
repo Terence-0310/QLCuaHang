@@ -30,9 +30,8 @@ namespace QuanLyCuaHangRuou
 
         public decimal DonGia { get; set; }
 
-        public decimal SoLuongTon { get; set; }
+        public int SoLuongTon { get; set; }
 
-        [Required]
         [StringLength(20)]
         public string DonViTinh { get; set; }
 

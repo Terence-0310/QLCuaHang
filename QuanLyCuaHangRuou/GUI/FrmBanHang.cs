@@ -105,7 +105,7 @@ namespace QuanLyCuaHangRuou.GUI
                         {
                             MaDoUong = r.Cells[0].Value.ToString(),
                             DonGia = Convert.ToDecimal(r.Cells[2].Value),
-                            SoLuong = Convert.ToDecimal(r.Cells[3].Value)
+                            SoLuong = Convert.ToInt32(r.Cells[3].Value)
                         });
 
                 string maNv = null;
@@ -116,7 +116,7 @@ namespace QuanLyCuaHangRuou.GUI
 
                 ShowInfo(Res.PaymentSuccess);
 
-                if (Confirm("B\u1EA1n c\u00F3 mu\u1ED1n xu\u1EA5t h\u00F3a \u0111\u01A1n?") == DialogResult.Yes)
+                if (Confirm("Ban co muon xuat hoa don?") == DialogResult.Yes)
                     ExportInvoice();
 
                 // Reload do uong va reset form

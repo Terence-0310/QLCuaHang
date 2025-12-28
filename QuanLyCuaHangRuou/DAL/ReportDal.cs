@@ -42,7 +42,7 @@ namespace QuanLyCuaHangRuou.DAL
             kw = (kw ?? "").Trim();
             var q = db.vw_TonKho.AsNoTracking().AsQueryable();
             if (kw.Length > 0)
-                q = q.Where(x => x.MaDoUong.Contains(kw) || x.TenDoUong.Contains(kw) || x.TenLoai.Contains(kw));
+                q = q.Where(x => x.MaDoUong.Contains(kw) || x.TenDoUong.Contains(kw));
             return q.ToList();
         });
     }

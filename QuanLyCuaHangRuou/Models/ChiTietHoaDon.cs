@@ -21,7 +21,7 @@ namespace QuanLyCuaHangRuou
 
         public decimal DonGia { get; set; }
 
-        public decimal SoLuong { get; set; }
+        public int SoLuong { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public decimal? ThanhTien { get; set; }

@@ -22,7 +22,7 @@ namespace QuanLyCuaHangRuou.GUI
                 LoadData();
                 SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError("L\u1ED7i kh\u1EDFi t\u1EA1o: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Loi khoi tao: " + DbConfig.GetInnerMsg(ex)); }
         }
 
         private void dgvDoUong_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -98,7 +98,7 @@ namespace QuanLyCuaHangRuou.GUI
                     MaDoUong = txtMaDoUong.Text.Trim(),
                     TenDoUong = txtTenDoUong.Text.Trim(),
                     DonGia = decimal.Parse(txtDonGia.Text.Trim()),
-                    SoLuongTon = decimal.Parse(txtSoLuongTon.Text.Trim()),
+                    SoLuongTon = int.Parse(txtSoLuongTon.Text.Trim()),
                     GhiChu = txtGhiChu.Text.Trim(),
                     HinhPath = (picDoUong.Tag as string) ?? ""
                 };
@@ -160,7 +160,7 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void txtSoLuongTon_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != ',') e.Handled = true;
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
         }
 
         // === HELPERS ===
@@ -171,7 +171,7 @@ namespace QuanLyCuaHangRuou.GUI
                 dgvDoUong.DataSource = string.IsNullOrWhiteSpace(kw) ? DoUongDal.GetAllForGrid() : DoUongDal.SearchForGrid(kw);
                 WinFormsExtensions.HideIfExists(dgvDoUong, "HinhPath", "MaLoai");
             }
-            catch (Exception ex) { throw new Exception("L\u1ED7i t\u1EA3i d\u1EEF li\u1EC7u: " + DbConfig.GetInnerMsg(ex), ex); }
+            catch (Exception ex) { throw new Exception("Loi tai du lieu: " + DbConfig.GetInnerMsg(ex), ex); }
         }
 
         private void DisplayRow(DoUongDal.DoUongGridRow row)
@@ -181,7 +181,7 @@ namespace QuanLyCuaHangRuou.GUI
                 txtMaDoUong.Text = row.MaDoUong;
                 txtTenDoUong.Text = row.TenDoUong;
                 txtDonGia.Text = row.DonGia.ToString("0");
-                txtSoLuongTon.Text = row.SoLuongTon.ToString("0.##");
+                txtSoLuongTon.Text = row.SoLuongTon.ToString();
                 txtGhiChu.Text = row.GhiChu ?? "";
                 _currentMaLoai = row.MaLoai;
                 SetImage(row.HinhPath);
@@ -230,7 +230,7 @@ namespace QuanLyCuaHangRuou.GUI
             if (string.IsNullOrWhiteSpace(txtMaDoUong.Text)) { ShowWarn(Res.EnterCode); return false; }
             if (string.IsNullOrWhiteSpace(txtTenDoUong.Text)) { ShowWarn(Res.EnterName); return false; }
             if (!decimal.TryParse(txtDonGia.Text, out var price) || price < 0) { ShowWarn(Res.InvalidPrice); return false; }
-            if (!decimal.TryParse(txtSoLuongTon.Text, out var qty) || qty < 0) { ShowWarn(Res.InvalidQuantity); return false; }
+            if (!int.TryParse(txtSoLuongTon.Text, out var qty) || qty < 0) { ShowWarn(Res.InvalidQuantity); return false; }
             return true;
         }
 
