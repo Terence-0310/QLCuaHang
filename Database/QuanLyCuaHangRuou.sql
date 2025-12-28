@@ -278,11 +278,6 @@ UPDATE NhanVien SET DiaChi = N'TP. Thu Duc, TP.HCM' WHERE MaNV = N'NV005';
 SELECT MaNV, TenNV, SoDienThoai, DiaChi, TrangThai FROM NhanVien;
 GO
 
---cd "D:\Hutech\Lập trình trên môi trường Win\QLCuaHang-main\QLCuaHang-main"
---git add .
---git commit -m "Mo ta thay doi"
---git push
-
 
 SELECT * FROM VaiTro
 SELECT * FROM dbo.NhanVien;
