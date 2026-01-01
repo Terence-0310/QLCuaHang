@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using QuanLyCuaHangRuou.DAL;
 using QuanLyCuaHangRuou.Common;
@@ -18,17 +18,40 @@ namespace QuanLyCuaHangRuou.GUI
                 WinFormsExtensions.SetDoubleBuffered(dgvKyGui);
                 WinFormsExtensions.AttachDataErrorHandler(dgvKyGui);
 
+                // Load danh sách khách hàng
                 cboKhachHang.DisplayMember = "TenKH";
                 cboKhachHang.ValueMember = "MaKH";
                 cboKhachHang.DataSource = KhachHangDal.GetAllForGrid();
 
+                // Load danh sách trạng thái
                 cboTrangThai.Items.Clear();
                 cboTrangThai.Items.AddRange(new object[] { Res.StatusConsigning, Res.StatusSold, Res.StatusReturned });
+
+                // Load danh sách vị trí lưu trữ
+                LoadViTriLuuTru();
+
+                dtpHanKyGui.Value = DateTime.Now.AddMonths(6);
 
                 LoadData();
                 SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError("L?i kh?i t?o: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + DbConfig.GetInnerMsg(ex)); }
+        }
+
+        private void LoadViTriLuuTru()
+        {
+            try
+            {
+                cboViTriLuuTru.DisplayMember = "TenViTri";
+                cboViTriLuuTru.ValueMember = "MaViTri";
+                cboViTriLuuTru.DataSource = ViTriLuuTruDal.GetAllForCombo();
+            }
+            catch
+            {
+                // Nếu bảng chưa tồn tại, thêm item mặc định
+                cboViTriLuuTru.Items.Clear();
+                cboViTriLuuTru.Items.Add("Chưa xác định");
+            }
         }
 
         private void dgvKyGui_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -96,6 +119,11 @@ namespace QuanLyCuaHangRuou.GUI
             {
                 if (string.IsNullOrWhiteSpace(txtTenRuou.Text)) { ShowWarn(Res.EnterName); return; }
                 if (cboKhachHang.SelectedValue == null) { ShowWarn(Res.EnterRequired); return; }
+                if (dtpHanKyGui.Value.Date <= dtpNgayKyGui.Value.Date) 
+                { 
+                    ShowWarn("Hạn ký gửi phải sau ngày ký gửi"); 
+                    return; 
+                }
 
                 btnLuu.Enabled = false;
                 Application.DoEvents();
@@ -108,7 +136,8 @@ namespace QuanLyCuaHangRuou.GUI
                     DungTichConLai = nudSoLuong.Value,
                     DonViTinh = "ml",
                     NgayKyGui = dtpNgayKyGui.Value.Date,
-                    HanKyGui = dtpNgayKyGui.Value.Date.AddMonths(6),
+                    HanKyGui = dtpHanKyGui.Value.Date,
+                    ViTriLuuTru = cboViTriLuuTru.SelectedValue?.ToString() ?? "",
                     TrangThai = cboTrangThai.SelectedItem?.ToString() ?? Res.StatusConsigning
                 };
 
@@ -155,7 +184,7 @@ namespace QuanLyCuaHangRuou.GUI
                 dgvKyGui.DataSource = string.IsNullOrWhiteSpace(kw) ? KyGuiRuouDal.GetAllForGrid() : KyGuiRuouDal.SearchForGrid(kw);
                 WinFormsExtensions.HideIfExists(dgvKyGui, "HinhPath", "MaKH");
             }
-            catch (Exception ex) { throw new Exception("L?i t?i d? li?u: " + DbConfig.GetInnerMsg(ex), ex); }
+            catch (Exception ex) { throw new Exception("Lỗi tải dữ liệu: " + DbConfig.GetInnerMsg(ex), ex); }
         }
 
         private void DisplayRow(KyGuiRuouDal.KyGuiGridRow row)
@@ -166,7 +195,27 @@ namespace QuanLyCuaHangRuou.GUI
                 txtTenRuou.Text = row.TenRuou;
                 nudSoLuong.Value = row.DungTichConLai;
                 dtpNgayKyGui.Value = row.NgayKyGui;
+                dtpHanKyGui.Value = row.HanKyGui;
 
+                // Chọn vị trí lưu trữ
+                if (!string.IsNullOrEmpty(row.ViTriLuuTru))
+                {
+                    for (int i = 0; i < cboViTriLuuTru.Items.Count; i++)
+                    {
+                        var item = cboViTriLuuTru.Items[i] as ViTriLuuTruDal.ViTriGridRow;
+                        if (item != null && item.MaViTri == row.ViTriLuuTru) 
+                        { 
+                            cboViTriLuuTru.SelectedIndex = i; 
+                            break; 
+                        }
+                    }
+                }
+                else
+                {
+                    cboViTriLuuTru.SelectedIndex = cboViTriLuuTru.Items.Count > 0 ? 0 : -1;
+                }
+
+                // Chọn khách hàng
                 for (int i = 0; i < cboKhachHang.Items.Count; i++)
                 {
                     var item = cboKhachHang.Items[i] as KhachHangDal.KhachHangGridRow;
@@ -199,7 +248,9 @@ namespace QuanLyCuaHangRuou.GUI
                 cboKhachHang.Enabled = !isView && mode == UiMode.Add;
                 cboTrangThai.Enabled = !isView;
                 dtpNgayKyGui.Enabled = !isView && mode == UiMode.Add;
+                dtpHanKyGui.Enabled = !isView;
                 nudSoLuong.Enabled = !isView;
+                cboViTriLuuTru.Enabled = !isView;
             }
             catch { }
         }
@@ -211,8 +262,10 @@ namespace QuanLyCuaHangRuou.GUI
                 txtMaKyGui.Clear(); txtTenRuou.Clear();
                 cboKhachHang.SelectedIndex = cboKhachHang.Items.Count > 0 ? 0 : -1;
                 dtpNgayKyGui.Value = DateTime.Now;
-                nudSoLuong.Value = 1;
+                dtpHanKyGui.Value = DateTime.Now.AddMonths(6);
+                nudSoLuong.Value = 750;
                 cboTrangThai.SelectedIndex = 0;
+                cboViTriLuuTru.SelectedIndex = cboViTriLuuTru.Items.Count > 0 ? 0 : -1;
             }
             catch { }
         }

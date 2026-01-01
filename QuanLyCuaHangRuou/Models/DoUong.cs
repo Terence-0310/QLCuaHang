@@ -35,6 +35,17 @@ namespace QuanLyCuaHangRuou
         [StringLength(20)]
         public string DonViTinh { get; set; }
 
+        /// <summary>
+        /// Dung tích r??u (ml)
+        /// </summary>
+        public decimal? DungTich { get; set; }
+
+        /// <summary>
+        /// H?n s? d?ng c?a r??u
+        /// </summary>
+        [Column(TypeName = "date")]
+        public DateTime? HanSuDung { get; set; }
+
         [StringLength(500)]
         public string GhiChu { get; set; }
 

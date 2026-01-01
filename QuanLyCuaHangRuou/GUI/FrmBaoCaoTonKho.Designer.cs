@@ -7,6 +7,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBaoCaoTonKho));
             this.panelTop = new System.Windows.Forms.Panel();
             this.lblTim = new System.Windows.Forms.Label();
             this.txtTim = new System.Windows.Forms.TextBox();
@@ -39,15 +40,15 @@
             this.lblTim.AutoSize = true;
             this.lblTim.Location = new System.Drawing.Point(10, 17);
             this.lblTim.Name = "lblTim";
-            this.lblTim.Size = new System.Drawing.Size(60, 15);
+            this.lblTim.Size = new System.Drawing.Size(73, 20);
             this.lblTim.TabIndex = 0;
-            this.lblTim.Text = "T\u00ECm ki\u1EBFm:";
+            this.lblTim.Text = "Tìm kiếm:";
             // 
             // txtTim
             // 
             this.txtTim.Location = new System.Drawing.Point(80, 14);
             this.txtTim.Name = "txtTim";
-            this.txtTim.Size = new System.Drawing.Size(250, 23);
+            this.txtTim.Size = new System.Drawing.Size(250, 27);
             this.txtTim.TabIndex = 1;
             // 
             // btnTim
@@ -56,7 +57,7 @@
             this.btnTim.Name = "btnTim";
             this.btnTim.Size = new System.Drawing.Size(75, 27);
             this.btnTim.TabIndex = 2;
-            this.btnTim.Text = "T\u00ECm";
+            this.btnTim.Text = "Tìm";
             this.btnTim.Click += new System.EventHandler(this.btnTim_Click);
             // 
             // btnLamMoi
@@ -65,7 +66,7 @@
             this.btnLamMoi.Name = "btnLamMoi";
             this.btnLamMoi.Size = new System.Drawing.Size(90, 27);
             this.btnLamMoi.TabIndex = 3;
-            this.btnLamMoi.Text = "L\u00E0m m\u1EDBi";
+            this.btnLamMoi.Text = "Làm mới";
             this.btnLamMoi.Click += new System.EventHandler(this.btnLamMoi_Click);
             // 
             // btnXuatExcel
@@ -74,7 +75,7 @@
             this.btnXuatExcel.Name = "btnXuatExcel";
             this.btnXuatExcel.Size = new System.Drawing.Size(100, 27);
             this.btnXuatExcel.TabIndex = 4;
-            this.btnXuatExcel.Text = "Xu\u1EA5t Excel";
+            this.btnXuatExcel.Text = "Xuất Excel";
             this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
             // 
             // dgvTonKho
@@ -83,10 +84,12 @@
             this.dgvTonKho.AllowUserToDeleteRows = false;
             this.dgvTonKho.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvTonKho.BackgroundColor = System.Drawing.Color.White;
+            this.dgvTonKho.ColumnHeadersHeight = 29;
             this.dgvTonKho.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvTonKho.Location = new System.Drawing.Point(10, 60);
             this.dgvTonKho.Name = "dgvTonKho";
             this.dgvTonKho.ReadOnly = true;
+            this.dgvTonKho.RowHeadersWidth = 51;
             this.dgvTonKho.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvTonKho.Size = new System.Drawing.Size(964, 451);
             this.dgvTonKho.TabIndex = 0;
@@ -107,22 +110,23 @@
             this.lblTongTonKho.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(123)))), ((int)(((byte)(255)))));
             this.lblTongTonKho.Location = new System.Drawing.Point(10, 10);
             this.lblTongTonKho.Name = "lblTongTonKho";
-            this.lblTongTonKho.Size = new System.Drawing.Size(170, 21);
+            this.lblTongTonKho.Size = new System.Drawing.Size(172, 28);
             this.lblTongTonKho.TabIndex = 0;
-            this.lblTongTonKho.Text = "T\u1ED5ng s\u1ED1 l\u01B0\u1EE3ng: 0";
+            this.lblTongTonKho.Text = "Tổng số lượng: 0";
             // 
             // FrmBaoCaoTonKho
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.dgvTonKho);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelBottom);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmBaoCaoTonKho";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Text = "B\u00E1o c\u00E1o t\u1ED3n kho";
+            this.Text = "Báo cáo tồn kho";
             this.Load += new System.EventHandler(this.FrmBaoCaoTonKho_Load);
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();

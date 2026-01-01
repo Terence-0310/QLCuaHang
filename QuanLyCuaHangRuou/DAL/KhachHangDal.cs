@@ -1,13 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using QuanLyCuaHangRuou.Common;
 
 namespace QuanLyCuaHangRuou.DAL
 {
-    /// <summary>
-    /// Quan ly khach hang - co try-catch day du
-    /// </summary>
     public static class KhachHangDal
     {
         public sealed class KhachHangGridRow
@@ -20,61 +17,33 @@ namespace QuanLyCuaHangRuou.DAL
             public string HinhPath { get; set; }
         }
 
-        public static List<KhachHangGridRow> GetAllForGrid()
-        {
-            try
+        public static List<KhachHangGridRow> GetAllForGrid() => DbConfig.Use(db =>
+            db.KhachHangs.Select(x => new KhachHangGridRow
             {
-                return DbConfig.Use(db =>
-                    db.KhachHangs.Select(x => new KhachHangGridRow
-                    {
-                        MaKH = x.MaKH, TenKH = x.TenKH, SoDienThoai = x.SoDienThoai,
-                        DiaChi = x.DiaChi, TrangThai = x.TrangThai, HinhPath = x.HinhPath
-                    }).ToList());
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("L\u1ED7i khi t\u1EA3i danh s\u00E1ch kh\u00E1ch h\u00E0ng: " + DbConfig.GetInnerMsg(ex), ex);
-            }
-        }
+                MaKH = x.MaKH, TenKH = x.TenKH, SoDienThoai = x.SoDienThoai,
+                DiaChi = x.DiaChi, TrangThai = x.TrangThai, HinhPath = x.HinhPath
+            }).ToList());
 
-        public static List<KhachHangGridRow> SearchForGrid(string kw)
+        public static List<KhachHangGridRow> SearchForGrid(string kw) => DbConfig.Use(db =>
         {
-            try
+            kw = (kw ?? "").Trim();
+            var q = db.KhachHangs.AsQueryable();
+            if (kw.Length > 0)
+                q = q.Where(x => x.MaKH.Contains(kw) || x.TenKH.Contains(kw) || x.SoDienThoai.Contains(kw));
+            return q.Select(x => new KhachHangGridRow
             {
-                return DbConfig.Use(db =>
-                {
-                    kw = (kw ?? "").Trim();
-                    var q = db.KhachHangs.AsQueryable();
-                    if (kw.Length > 0)
-                        q = q.Where(x => x.MaKH.Contains(kw) || x.TenKH.Contains(kw) || x.SoDienThoai.Contains(kw));
-                    return q.Select(x => new KhachHangGridRow
-                    {
-                        MaKH = x.MaKH, TenKH = x.TenKH, SoDienThoai = x.SoDienThoai,
-                        DiaChi = x.DiaChi, TrangThai = x.TrangThai, HinhPath = x.HinhPath
-                    }).ToList();
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Loi khi tim kiem khach hang: " + DbConfig.GetInnerMsg(ex), ex);
-            }
-        }
+                MaKH = x.MaKH, TenKH = x.TenKH, SoDienThoai = x.SoDienThoai,
+                DiaChi = x.DiaChi, TrangThai = x.TrangThai, HinhPath = x.HinhPath
+            }).ToList();
+        });
 
-        public static KhachHang GetById(string id)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(id)) return null;
-                return DbConfig.Use(db => db.KhachHangs.FirstOrDefault(x => x.MaKH == id));
-            }
-            catch { return null; }
-        }
+        public static KhachHang GetById(string id) =>
+            string.IsNullOrWhiteSpace(id) ? null : DbConfig.Use(db => db.KhachHangs.FirstOrDefault(x => x.MaKH == id));
 
         public static void Add(KhachHang e)
         {
-            if (e == null) throw new ArgumentNullException(nameof(e));
-            if (string.IsNullOrWhiteSpace(e.MaKH)) throw new ArgumentException("M\u00E3 KH kh\u00F4ng h\u1EE3p l\u1EC7");
-            if (string.IsNullOrWhiteSpace(e.TenKH)) throw new ArgumentException("T\u00EAn KH kh\u00F4ng h\u1EE3p l\u1EC7");
+            if (e == null || string.IsNullOrWhiteSpace(e.MaKH) || string.IsNullOrWhiteSpace(e.TenKH))
+                throw new ArgumentException("Mã và tên khách hàng không hợp lệ");
 
             DbConfig.Use(db =>
             {
@@ -86,13 +55,13 @@ namespace QuanLyCuaHangRuou.DAL
 
         public static void Update(KhachHang e)
         {
-            if (e == null) throw new ArgumentNullException(nameof(e));
-            if (string.IsNullOrWhiteSpace(e.MaKH)) throw new ArgumentException("M\u00E3 KH kh\u00F4ng h\u1EE3p l\u1EC7");
+            if (e == null || string.IsNullOrWhiteSpace(e.MaKH))
+                throw new ArgumentException("Mã khách hàng không hợp lệ");
 
             DbConfig.Use(db =>
             {
-                var ex = db.KhachHangs.FirstOrDefault(x => x.MaKH == e.MaKH);
-                if (ex == null) throw new InvalidOperationException("Kh\u00F4ng t\u00ECm th\u1EA5y kh\u00E1ch h\u00E0ng");
+                var ex = db.KhachHangs.FirstOrDefault(x => x.MaKH == e.MaKH) 
+                    ?? throw new InvalidOperationException("Không tìm thấy khách hàng");
                 ex.TenKH = e.TenKH;
                 ex.SoDienThoai = e.SoDienThoai;
                 ex.DiaChi = e.DiaChi;
@@ -104,57 +73,47 @@ namespace QuanLyCuaHangRuou.DAL
 
         public static void Delete(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("M\u00E3 KH kh\u00F4ng h\u1EE3p l\u1EC7");
+            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Mã KH không hợp lệ");
 
-            Model1 db = null;
-            System.Data.Entity.DbContextTransaction tx = null;
-            try
+            using (var db = DbConfig.Create())
+            using (var tx = db.Database.BeginTransaction())
             {
-                db = DbConfig.Create();
-                tx = db.Database.BeginTransaction();
-
-                var e = db.KhachHangs.FirstOrDefault(x => x.MaKH == id);
-                if (e == null) throw new InvalidOperationException("Kh\u00F4ng t\u00ECm th\u1EA5y kh\u00E1ch h\u00E0ng");
-
-                bool hasKG = db.KyGuiRuous.Any(x => x.MaKH == id);
-                bool hasHD = db.HoaDons.Any(x => x.MaKH == id);
-
-                if (AppSession.IsAdmin)
+                try
                 {
-                    db.KyGuiRuous.RemoveRange(db.KyGuiRuous.Where(x => x.MaKH == id));
-                    foreach (var hd in db.HoaDons.Where(x => x.MaKH == id)) hd.MaKH = null;
-                    db.KhachHangs.Remove(e);
+                    var e = db.KhachHangs.FirstOrDefault(x => x.MaKH == id)
+                        ?? throw new InvalidOperationException("Không tìm thấy khách hàng");
+
+                    bool hasKG = db.KyGuiRuous.Any(x => x.MaKH == id);
+                    bool hasHD = db.HoaDons.Any(x => x.MaKH == id);
+
+                    if (AppSession.IsAdmin)
+                    {
+                        db.KyGuiRuous.RemoveRange(db.KyGuiRuous.Where(x => x.MaKH == id));
+                        foreach (var hd in db.HoaDons.Where(x => x.MaKH == id)) hd.MaKH = null;
+                        db.KhachHangs.Remove(e);
+                    }
+                    else if (hasKG || hasHD)
+                    {
+                        e.TrangThai = Res.StatusInactive;
+                        db.SaveChanges();
+                        tx.Commit();
+                        var reason = (hasKG ? Res.RelatedConsignment : "") + (hasHD ? (hasKG ? ", " : "") + Res.RelatedInvoice : "");
+                        throw new InvalidOperationException(Res.SoftDeleteCustomer(reason));
+                    }
+                    else
+                    {
+                        db.KhachHangs.Remove(e);
+                    }
+
                     db.SaveChanges();
                     tx.Commit();
-                    return;
                 }
-
-                if (hasKG || hasHD)
+                catch (InvalidOperationException) { throw; }
+                catch (Exception ex)
                 {
-                    e.TrangThai = Res.StatusInactive;
-                    db.SaveChanges();
-                    tx.Commit();
-                    var reason = (hasKG ? Res.RelatedConsignment : "") + (hasHD ? (hasKG ? ", " : "") + Res.RelatedInvoice : "");
-                    throw new InvalidOperationException(Res.SoftDeleteCustomer(reason));
+                    tx.Rollback();
+                    throw new Exception("Lỗi khi xóa khách hàng: " + DbConfig.GetInnerMsg(ex), ex);
                 }
-
-                db.KhachHangs.Remove(e);
-                db.SaveChanges();
-                tx.Commit();
-            }
-            catch (InvalidOperationException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                try { tx?.Rollback(); } catch { }
-                throw new Exception("L\u1ED7i khi x\u00F3a kh\u00E1ch h\u00E0ng: " + DbConfig.GetInnerMsg(ex), ex);
-            }
-            finally
-            {
-                try { tx?.Dispose(); } catch { }
-                try { db?.Dispose(); } catch { }
             }
         }
     }

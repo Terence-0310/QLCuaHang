@@ -82,11 +82,9 @@
   <ItemGroup>
     <Compile Include="Common\AppSession.cs" />
     <Compile Include="Common\ExcelExporter.cs" />
-    <Compile Include="Common\Formatters.cs" />
     <Compile Include="Common\PermissionKeys.cs" />
     <Compile Include="Common\Res.cs" />
     <Compile Include="Common\UIConstants.cs" />
-    <Compile Include="Common\Validators.cs" />
     <Compile Include="Common\WinFormsExtensions.cs" />
     <Compile Include="DAL\AuthDal.cs" />
     <Compile Include="DAL\BanHangDal.cs" />
@@ -100,6 +98,7 @@
     <Compile Include="DAL\ReportDal.cs" />
     <Compile Include="DAL\TaiKhoanDal.cs" />
     <Compile Include="DAL\VaiTroDal.cs" />
+    <Compile Include="DAL\ViTriLuuTruDal.cs" />
     <Compile Include="GUI\FrmBanHang.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +135,12 @@
     <Compile Include="GUI\FrmKyGuiRuou.Designer.cs">
       <DependentUpon>FrmKyGuiRuou.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\FrmLichSuHoaDon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\FrmLichSuHoaDon.Designer.cs">
+      <DependentUpon>FrmLichSuHoaDon.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\FrmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,6 +159,12 @@
     <Compile Include="GUI\FrmNhanVien.Designer.cs">
       <DependentUpon>FrmNhanVien.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\FrmXemHoaDon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\FrmXemHoaDon.Designer.cs">
+      <DependentUpon>FrmXemHoaDon.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\ChiTietHoaDon.cs" />
     <Compile Include="Models\DoUong.cs" />
     <Compile Include="Models\HoaDon.cs" />
@@ -162,6 +173,7 @@
     <Compile Include="Models\LoaiDoUong.cs" />
     <Compile Include="Models\Model1.cs" />
     <Compile Include="Models\NhanVien.cs" />
+    <Compile Include="Models\ViTriLuuTru.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\TaiKhoan.cs" />
@@ -186,8 +198,14 @@
     <EmbeddedResource Include="GUI\FrmKyGuiRuou.resx">
       <DependentUpon>FrmKyGuiRuou.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\FrmLichSuHoaDon.resx">
+      <DependentUpon>FrmLichSuHoaDon.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\FrmLogin.resx">
       <DependentUpon>FrmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\FrmNhanVien.resx">
       <DependentUpon>FrmNhanVien.cs</DependentUpon>

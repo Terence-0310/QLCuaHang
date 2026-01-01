@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using QuanLyCuaHangRuou.DAL;
@@ -29,30 +29,22 @@ namespace QuanLyCuaHangRuou.GUI
                 ResetHoaDon();
                 lblNhanVien.Text = AppSession.CurrentUser ?? "NV";
             }
-            catch (Exception ex) { ShowError("L\u1ED7i kh\u1EDFi t\u1EA1o: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + DbConfig.GetInnerMsg(ex)); }
         }
 
         private void ResetHoaDon()
         {
-            try
-            {
-                txtMaHD.Text = "HD" + DateTime.Now.ToString("yyyyMMddHHmmss");
-                dtpNgay.Value = DateTime.Now;
-                nudSoLuong.Value = 1;
-                dgvGioHang.Rows.Clear();
-                UpdateTotal();
-            }
-            catch { }
+            txtMaHD.Text = "HD" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            dtpNgay.Value = DateTime.Now;
+            nudSoLuong.Value = 1;
+            dgvGioHang.Rows.Clear();
+            UpdateTotal();
         }
 
         private void cboDoUong_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
-            {
-                if (cboDoUong.SelectedItem is DoUongDal.DoUongGridRow row)
-                    txtDonGia.Text = row.DonGia.ToString("N0");
-            }
-            catch { }
+            if (cboDoUong.SelectedItem is DoUongDal.DoUongGridRow row)
+                txtDonGia.Text = row.DonGia.ToString("N0");
         }
 
         private void btnThemVaoGio_Click(object sender, EventArgs e)
@@ -63,11 +55,10 @@ namespace QuanLyCuaHangRuou.GUI
                 int sl = (int)nudSoLuong.Value;
                 if (sl <= 0) { ShowWarn(Res.QtyMustBePositive); return; }
 
-                // Kiem tra ton kho
                 var duDb = DoUongDal.GetById(du.MaDoUong);
                 if (duDb != null && duDb.SoLuongTon < sl)
                 {
-                    ShowWarn($"T\u1ED3n kho kh\u00F4ng \u0111\u1EE7. C\u00F2n: {duDb.SoLuongTon}");
+                    ShowWarn($"Tồn kho không đủ. Còn: {duDb.SoLuongTon}");
                     return;
                 }
 
@@ -111,15 +102,13 @@ namespace QuanLyCuaHangRuou.GUI
                 string maNv = null;
                 try { maNv = NhanVienDal.GetByUsername(AppSession.CurrentUser)?.MaNV; } catch { }
 
-                string maHD = txtMaHD.Text.Trim();
-                BanHangDal.ThanhToan(maHD, dtpNgay.Value, cboKhachHang.SelectedValue?.ToString(), maNv, null, items);
+                BanHangDal.ThanhToan(txtMaHD.Text.Trim(), dtpNgay.Value, cboKhachHang.SelectedValue?.ToString(), maNv, null, items);
 
                 ShowInfo(Res.PaymentSuccess);
 
-                if (Confirm("Ban co muon xuat hoa don?") == DialogResult.Yes)
+                if (Confirm("Bạn có muốn xuất hóa đơn?") == DialogResult.Yes)
                     ExportInvoice();
 
-                // Reload do uong va reset form
                 try { cboDoUong.DataSource = DoUongDal.GetAllForGrid(); } catch { }
                 ResetHoaDon();
             }
@@ -129,62 +118,51 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnXoaDong_Click(object sender, EventArgs e)
         {
-            try
+            if (dgvGioHang.CurrentRow != null)
             {
-                if (dgvGioHang.CurrentRow != null) { dgvGioHang.Rows.Remove(dgvGioHang.CurrentRow); UpdateTotal(); }
+                dgvGioHang.Rows.Remove(dgvGioHang.CurrentRow);
+                UpdateTotal();
             }
-            catch { }
         }
 
         private void btnXoaHet_Click(object sender, EventArgs e)
         {
-            try { dgvGioHang.Rows.Clear(); UpdateTotal(); } catch { }
+            dgvGioHang.Rows.Clear();
+            UpdateTotal();
         }
 
         private void btnInHoaDon_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (dgvGioHang.Rows.Count == 0) { ShowWarn(Res.CartEmpty); return; }
-                ExportInvoice();
-            }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            if (dgvGioHang.Rows.Count == 0) { ShowWarn(Res.CartEmpty); return; }
+            ExportInvoice();
         }
 
         // === HELPERS ===
         private void UpdateTotal()
         {
-            try
-            {
-                decimal sum = 0;
-                foreach (DataGridViewRow r in dgvGioHang.Rows)
-                    if (r.Cells[4].Value != null) sum += Convert.ToDecimal(r.Cells[4].Value);
-                lblTongTienValue.Text = Res.TotalAmount(sum);
-            }
-            catch { lblTongTienValue.Text = "0 VN\u0110"; }
+            decimal sum = 0;
+            foreach (DataGridViewRow r in dgvGioHang.Rows)
+                if (r.Cells[4].Value != null) sum += Convert.ToDecimal(r.Cells[4].Value);
+            lblTongTienValue.Text = Res.TotalAmount(sum);
         }
 
         private decimal GetTotal()
         {
-            try
-            {
-                decimal sum = 0;
-                foreach (DataGridViewRow r in dgvGioHang.Rows)
-                    if (r.Cells[4].Value != null) sum += Convert.ToDecimal(r.Cells[4].Value);
-                return sum;
-            }
-            catch { return 0; }
+            decimal sum = 0;
+            foreach (DataGridViewRow r in dgvGioHang.Rows)
+                if (r.Cells[4].Value != null) sum += Convert.ToDecimal(r.Cells[4].Value);
+            return sum;
         }
 
         private void ExportInvoice()
         {
             try
             {
-                string tenKH = "Kh\u00E1ch l\u1EBB";
+                string tenKH = "Khách lẻ";
                 if (cboKhachHang.SelectedItem is KhachHangDal.KhachHangGridRow kh) tenKH = kh.TenKH;
                 ExcelExporter.ExportHoaDon(txtMaHD.Text.Trim(), dtpNgay.Value, tenKH, AppSession.CurrentUser ?? "", dgvGioHang, GetTotal(), true);
             }
-            catch (Exception ex) { ShowError("L\u1ED7i xu\u1EA5t h\u00F3a \u0111\u01A1n: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi xuất hóa đơn: " + DbConfig.GetInnerMsg(ex)); }
         }
 
         private void ShowWarn(string msg) => MessageBox.Show(this, msg, Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);

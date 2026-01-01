@@ -7,6 +7,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmKhachHang));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.grpThongTin = new System.Windows.Forms.GroupBox();
             this.tableInputs = new System.Windows.Forms.TableLayoutPanel();
@@ -18,6 +19,8 @@
             this.txtSDT = new System.Windows.Forms.TextBox();
             this.lblDiaChi = new System.Windows.Forms.Label();
             this.txtDiaChi = new System.Windows.Forms.TextBox();
+            this.lblTrangThai = new System.Windows.Forms.Label();
+            this.cboTrangThai = new System.Windows.Forms.ComboBox();
             this.grpHinh = new System.Windows.Forms.GroupBox();
             this.picKhachHang = new System.Windows.Forms.PictureBox();
             this.panelImageButtons = new System.Windows.Forms.Panel();
@@ -99,10 +102,13 @@
             this.tableInputs.Controls.Add(this.txtSDT, 3, 0);
             this.tableInputs.Controls.Add(this.lblDiaChi, 2, 1);
             this.tableInputs.Controls.Add(this.txtDiaChi, 3, 1);
+            this.tableInputs.Controls.Add(this.lblTrangThai, 0, 2);
+            this.tableInputs.Controls.Add(this.cboTrangThai, 1, 2);
             this.tableInputs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableInputs.Location = new System.Drawing.Point(3, 23);
             this.tableInputs.Name = "tableInputs";
-            this.tableInputs.RowCount = 2;
+            this.tableInputs.RowCount = 3;
+            this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.Size = new System.Drawing.Size(758, 104);
@@ -184,6 +190,26 @@
             this.txtDiaChi.Name = "txtDiaChi";
             this.txtDiaChi.Size = new System.Drawing.Size(293, 27);
             this.txtDiaChi.TabIndex = 7;
+            // 
+            // lblTrangThai
+            // 
+            this.lblTrangThai.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblTrangThai.Location = new System.Drawing.Point(3, 70);
+            this.lblTrangThai.Name = "lblTrangThai";
+            this.lblTrangThai.Size = new System.Drawing.Size(74, 23);
+            this.lblTrangThai.TabIndex = 8;
+            this.lblTrangThai.Text = "Trạng thái:";
+            this.lblTrangThai.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cboTrangThai
+            // 
+            this.cboTrangThai.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboTrangThai.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboTrangThai.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cboTrangThai.Location = new System.Drawing.Point(83, 73);
+            this.cboTrangThai.Name = "cboTrangThai";
+            this.cboTrangThai.Size = new System.Drawing.Size(293, 28);
+            this.cboTrangThai.TabIndex = 9;
             // 
             // grpHinh
             // 
@@ -271,14 +297,14 @@
             // 
             // txtTim
             // 
-            this.txtTim.Location = new System.Drawing.Point(60, 14);
+            this.txtTim.Location = new System.Drawing.Point(85, 14);
             this.txtTim.Name = "txtTim";
-            this.txtTim.Size = new System.Drawing.Size(240, 27);
+            this.txtTim.Size = new System.Drawing.Size(200, 27);
             this.txtTim.TabIndex = 1;
             // 
             // btnTim
             // 
-            this.btnTim.Location = new System.Drawing.Point(306, 12);
+            this.btnTim.Location = new System.Drawing.Point(291, 12);
             this.btnTim.Name = "btnTim";
             this.btnTim.Size = new System.Drawing.Size(75, 27);
             this.btnTim.TabIndex = 2;
@@ -287,7 +313,7 @@
             // 
             // btnLamMoi
             // 
-            this.btnLamMoi.Location = new System.Drawing.Point(387, 12);
+            this.btnLamMoi.Location = new System.Drawing.Point(372, 12);
             this.btnLamMoi.Name = "btnLamMoi";
             this.btnLamMoi.Size = new System.Drawing.Size(85, 27);
             this.btnLamMoi.TabIndex = 3;
@@ -396,6 +422,7 @@
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.splitContainer);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmKhachHang";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Text = "Quản lý khách hàng";
@@ -422,8 +449,9 @@
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.GroupBox grpThongTin, grpHinh;
         private System.Windows.Forms.TableLayoutPanel tableInputs;
-        private System.Windows.Forms.Label lblMa, lblTen, lblSDT, lblDiaChi, lblTim;
+        private System.Windows.Forms.Label lblMa, lblTen, lblSDT, lblDiaChi, lblTrangThai, lblTim;
         private System.Windows.Forms.TextBox txtMaKH, txtTenKH, txtSDT, txtDiaChi, txtTim;
+        private System.Windows.Forms.ComboBox cboTrangThai;
         private System.Windows.Forms.PictureBox picKhachHang;
         private System.Windows.Forms.Panel panelImageButtons, panelBottom, panelSearch, panelButtons;
         private System.Windows.Forms.Button btnChonHinh, btnXoaHinh, btnTim, btnLamMoi, btnThem, btnSua, btnXoa, btnLuu, btnHuy;

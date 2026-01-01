@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using QuanLyCuaHangRuou.DAL;
 using QuanLyCuaHangRuou.Common;
@@ -16,22 +16,20 @@ namespace QuanLyCuaHangRuou.GUI
         {
             try
             {
-                // Kiem tra ket noi khi load form
                 var conn = DbConfig.TestConnection();
                 if (!conn.ok)
-                    ShowError(conn.msg + "\n\nKiem tra App.config va SQL Server.");
+                    ShowError(conn.msg + "\n\nKiểm tra App.config và SQL Server.");
                 txtUsername.Focus();
             }
             catch (Exception ex)
             {
-                ShowError("Loi khi khoi tao: " + DbConfig.GetInnerMsg(ex));
+                ShowError("Lỗi khi khởi tạo: " + DbConfig.GetInnerMsg(ex));
             }
         }
 
         private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
         {
-            try { txtPassword.PasswordChar = chkShowPassword.Checked ? '\0' : '*'; }
-            catch { }
+            txtPassword.PasswordChar = chkShowPassword.Checked ? '\0' : '*';
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -44,7 +42,6 @@ namespace QuanLyCuaHangRuou.GUI
                 if (user.Length == 0) { ShowWarn(Res.EnterUsername); txtUsername.Focus(); return; }
                 if (pass.Length == 0) { ShowWarn(Res.EnterPassword); txtPassword.Focus(); return; }
 
-                // Disable button de tranh click nhieu lan
                 btnLogin.Enabled = false;
                 Application.DoEvents();
 
@@ -64,7 +61,7 @@ namespace QuanLyCuaHangRuou.GUI
             }
             catch (Exception ex)
             {
-                ShowError("Loi dang nhap: " + DbConfig.GetInnerMsg(ex));
+                ShowError("Lỗi đăng nhập: " + DbConfig.GetInnerMsg(ex));
             }
             finally
             {
@@ -74,8 +71,7 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            try { DialogResult = DialogResult.Cancel; }
-            catch { Application.Exit(); }
+            DialogResult = DialogResult.Cancel;
         }
 
         private void ShowWarn(string msg) => MessageBox.Show(this, msg, Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);

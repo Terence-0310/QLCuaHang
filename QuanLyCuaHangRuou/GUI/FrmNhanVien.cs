@@ -9,6 +9,8 @@ namespace QuanLyCuaHangRuou.GUI
     {
         private UiMode _mode = UiMode.View;
         private string _currentMaTK;
+        private string _currentMaVaiTro;
+        private string _currentUsername;
 
         public FrmNhanVien() { InitializeComponent(); }
 
@@ -22,7 +24,7 @@ namespace QuanLyCuaHangRuou.GUI
                 LoadData();
                 SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError("Loi khoi tao: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + DbConfig.GetInnerMsg(ex)); }
         }
 
         private void LoadComboBoxes()
@@ -30,8 +32,20 @@ namespace QuanLyCuaHangRuou.GUI
             try
             {
                 cboVaiTro.Items.Clear();
-                try { foreach (var vt in VaiTroDal.GetAll()) cboVaiTro.Items.Add(vt.MaVaiTro); }
-                catch { cboVaiTro.Items.AddRange(new[] { PermissionKeys.RoleAdmin, PermissionKeys.RoleManager, PermissionKeys.RoleStaff }); }
+                try 
+                { 
+                    foreach (var vt in VaiTroDal.GetAll()) 
+                        cboVaiTro.Items.Add(vt.MaVaiTro); 
+                }
+                catch 
+                { 
+                    cboVaiTro.Items.AddRange(new[] { 
+                        PermissionKeys.RoleAdmin, 
+                        PermissionKeys.RoleManager, 
+                        PermissionKeys.RoleStaff,
+                        PermissionKeys.RoleWarehouse 
+                    }); 
+                }
 
                 cboTrangThai.Items.Clear();
                 cboTrangThai.Items.Add(Res.StatusWorking);
@@ -56,7 +70,7 @@ namespace QuanLyCuaHangRuou.GUI
         {
             try
             {
-                if (!AppSession.CanEditEmployees) { ShowWarn(Res.NoPermissionDelete); return; }
+                if (!AppSession.CanEditEmployees) { ShowWarn(Res.NoPermissionAdd); return; }
                 ClearInputs();
                 SetMode(UiMode.Add);
                 txtMaNV.Focus();
@@ -68,7 +82,7 @@ namespace QuanLyCuaHangRuou.GUI
         {
             try
             {
-                if (!AppSession.CanEditEmployees) { ShowWarn(Res.NoPermissionDelete); return; }
+                if (!AppSession.CanEditEmployees) { ShowWarn(Res.NoPermissionEdit); return; }
                 var row = dgvNhanVien.CurrentRow?.DataBoundItem as NhanVienDal.NhanVienGridRow;
                 if (row == null) { ShowWarn(Res.SelectRowToEdit); return; }
                 DisplayRow(row);
@@ -85,6 +99,29 @@ namespace QuanLyCuaHangRuou.GUI
                 if (!AppSession.CanDeleteEmployees) { ShowWarn(Res.NoPermissionDelete); return; }
                 var row = dgvNhanVien.CurrentRow?.DataBoundItem as NhanVienDal.NhanVienGridRow;
                 if (row == null) { ShowWarn(Res.SelectRowToDelete); return; }
+
+                // Kiểm tra quyền xóa trước khi hỏi xác nhận
+                if (!AppSession.CanDeleteEmployeeWithRole(row.MaVaiTro, row.Username))
+                {
+                    if (string.Equals(AppSession.CurrentUser, row.Username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ShowWarn(Res.CannotDeleteSelf);
+                        return;
+                    }
+                    if (row.MaVaiTro == PermissionKeys.RoleAdmin)
+                    {
+                        ShowWarn(Res.CannotDeleteAdmin);
+                        return;
+                    }
+                    if (row.MaVaiTro == PermissionKeys.RoleManager && !AppSession.IsAdmin)
+                    {
+                        ShowWarn(Res.CannotDeleteManager);
+                        return;
+                    }
+                    ShowWarn(Res.NoPermissionDelete);
+                    return;
+                }
+
                 if (Confirm(Res.ConfirmDelete) != DialogResult.Yes) return;
 
                 btnXoa.Enabled = false;
@@ -120,6 +157,14 @@ namespace QuanLyCuaHangRuou.GUI
                 if (_mode == UiMode.Add)
                 {
                     if (NhanVienDal.ExistsMaNV(maNV)) { ShowWarn(Res.CodeExists); return; }
+                    
+                    // Manager không được tạo Admin hoặc Manager
+                    if (!AppSession.IsAdmin && (vaiTro == PermissionKeys.RoleAdmin || vaiTro == PermissionKeys.RoleManager))
+                    {
+                        ShowWarn(Res.CannotCreateAdmin);
+                        return;
+                    }
+
                     var tk = new TaiKhoan { MaTK = TaiKhoanDal.GenerateMaTK(), Username = maNV, Password = "123456", MaVaiTro = vaiTro, TrangThai = true };
                     var nv = new NhanVien { MaNV = maNV, TenNV = tenNV, SoDienThoai = sdt, DiaChi = diaChi, TrangThai = trangThai };
                     NhanVienDal.AddWithAccount(nv, tk);
@@ -160,9 +205,9 @@ namespace QuanLyCuaHangRuou.GUI
             try
             {
                 dgvNhanVien.DataSource = string.IsNullOrWhiteSpace(kw) ? NhanVienDal.GetAllForGrid() : NhanVienDal.SearchForGrid(kw);
-                WinFormsExtensions.HideIfExists(dgvNhanVien, "HinhPath", "MaTK");
+                WinFormsExtensions.HideIfExists(dgvNhanVien, "HinhPath", "MaTK", "MaVaiTro");
             }
-            catch (Exception ex) { throw new Exception("Loi tai du lieu: " + DbConfig.GetInnerMsg(ex), ex); }
+            catch (Exception ex) { throw new Exception("Lỗi tải dữ liệu: " + DbConfig.GetInnerMsg(ex), ex); }
         }
 
         private void DisplayRow(NhanVienDal.NhanVienGridRow row)
@@ -174,20 +219,25 @@ namespace QuanLyCuaHangRuou.GUI
                 txtSDT.Text = row.SoDienThoai ?? "";
                 txtDiaChi.Text = row.DiaChi ?? "";
                 _currentMaTK = row.MaTK;
+                _currentMaVaiTro = row.MaVaiTro;
+                _currentUsername = row.Username;
 
-                var nv = NhanVienDal.GetById(row.MaNV);
-                if (nv != null)
+                // Chọn vai trò trong combo
+                if (!string.IsNullOrEmpty(row.MaVaiTro))
                 {
-                    if (nv.TaiKhoan?.MaVaiTro != null)
-                    {
-                        int idx = cboVaiTro.Items.IndexOf(nv.TaiKhoan.MaVaiTro);
-                        cboVaiTro.SelectedIndex = idx >= 0 ? idx : -1;
-                    }
-                    if (!string.IsNullOrEmpty(nv.TrangThai))
-                    {
-                        int idx = cboTrangThai.Items.IndexOf(nv.TrangThai);
-                        cboTrangThai.SelectedIndex = idx >= 0 ? idx : 0;
-                    }
+                    int idx = cboVaiTro.Items.IndexOf(row.MaVaiTro);
+                    cboVaiTro.SelectedIndex = idx >= 0 ? idx : -1;
+                }
+                else
+                {
+                    cboVaiTro.SelectedIndex = -1;
+                }
+
+                // Chọn trạng thái
+                if (!string.IsNullOrEmpty(row.TrangThai))
+                {
+                    int idx = cboTrangThai.Items.IndexOf(row.TrangThai);
+                    cboTrangThai.SelectedIndex = idx >= 0 ? idx : 0;
                 }
             }
             catch { }
@@ -212,8 +262,29 @@ namespace QuanLyCuaHangRuou.GUI
                 txtTenNV.ReadOnly = isView;
                 txtSDT.ReadOnly = isView;
                 txtDiaChi.ReadOnly = isView;
+                
+                // Chỉ Admin mới được thay đổi vai trò
                 cboVaiTro.Enabled = !isView && AppSession.IsAdmin;
                 cboTrangThai.Enabled = !isView;
+
+                // Nếu là Manager thì chỉ hiển thị vai trò STAFF và WAREHOUSE khi thêm mới
+                if (!isView && mode == UiMode.Add && !AppSession.IsAdmin)
+                {
+                    FilterVaiTroForManager();
+                }
+            }
+            catch { }
+        }
+
+        private void FilterVaiTroForManager()
+        {
+            try
+            {
+                cboVaiTro.Items.Clear();
+                cboVaiTro.Items.Add(PermissionKeys.RoleStaff);
+                cboVaiTro.Items.Add(PermissionKeys.RoleWarehouse);
+                cboVaiTro.SelectedIndex = 0;
+                cboVaiTro.Enabled = true;
             }
             catch { }
         }
@@ -222,7 +293,13 @@ namespace QuanLyCuaHangRuou.GUI
         {
             try
             {
-                txtMaNV.Clear(); txtTenNV.Clear(); txtSDT.Clear(); txtDiaChi.Clear(); _currentMaTK = null;
+                txtMaNV.Clear(); txtTenNV.Clear(); txtSDT.Clear(); txtDiaChi.Clear(); 
+                _currentMaTK = null;
+                _currentMaVaiTro = null;
+                _currentUsername = null;
+                
+                // Reload combo vai trò
+                LoadComboBoxes();
                 cboVaiTro.SelectedIndex = cboVaiTro.Items.Count > 0 ? cboVaiTro.Items.Count - 1 : -1;
                 cboTrangThai.SelectedIndex = 0;
             }

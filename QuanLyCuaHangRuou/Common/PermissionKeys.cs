@@ -1,13 +1,13 @@
-namespace QuanLyCuaHangRuou.Common
+﻿namespace QuanLyCuaHangRuou.Common
 {
     /// <summary>
-    /// Hang so vai tro va quyen trong he thong
+    /// Hằng số vai trò trong hệ thống - phải khớp với MaVaiTro trong database
     /// </summary>
     public static class PermissionKeys
     {
-        // === ROLES ===
         public const string RoleAdmin = "ADMIN";
-        public const string RoleManager = "QUAN_LY";
-        public const string RoleStaff = "NHAN_VIEN";
+        public const string RoleManager = "MANAGER";
+        public const string RoleStaff = "STAFF";
+        public const string RoleWarehouse = "WAREHOUSE";
     }
 }

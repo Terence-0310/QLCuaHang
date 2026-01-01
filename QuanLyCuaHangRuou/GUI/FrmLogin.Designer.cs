@@ -13,6 +13,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             this.panelMain = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
@@ -98,7 +99,7 @@
             this.chkShowPassword.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.chkShowPassword.Location = new System.Drawing.Point(30, 195);
             this.chkShowPassword.Name = "chkShowPassword";
-            this.chkShowPassword.Size = new System.Drawing.Size(123, 24);
+            this.chkShowPassword.Size = new System.Drawing.Size(127, 24);
             this.chkShowPassword.TabIndex = 2;
             this.chkShowPassword.Text = "Hiện mật khẩu";
             this.chkShowPassword.CheckedChanged += new System.EventHandler(this.chkShowPassword_CheckedChanged);
@@ -142,6 +143,7 @@
             this.Controls.Add(this.panelMain);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmLogin";

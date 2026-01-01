@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
 using QuanLyCuaHangRuou.DAL;
@@ -18,47 +18,44 @@ namespace QuanLyCuaHangRuou.GUI
             {
                 WinFormsExtensions.SetDoubleBuffered(dgvKhachHang);
                 WinFormsExtensions.AttachDataErrorHandler(dgvKhachHang);
+                LoadTrangThaiCombo();
                 LoadData();
                 SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError("L\u1ED7i kh\u1EDFi t\u1EA1o: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + DbConfig.GetInnerMsg(ex)); }
+        }
+
+        private void LoadTrangThaiCombo()
+        {
+            cboTrangThai.Items.Clear();
+            cboTrangThai.Items.Add(Res.StatusActive);
+            cboTrangThai.Items.Add(Res.StatusInactive);
+            cboTrangThai.SelectedIndex = 0;
         }
 
         private void dgvKhachHang_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            try
-            {
-                if (_mode != UiMode.View) return;
-                var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
-                if (row != null) DisplayRow(row);
-            }
-            catch { }
+            if (_mode != UiMode.View) return;
+            var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
+            if (row != null) DisplayRow(row);
         }
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionDelete); return; }
-                ClearInputs();
-                SetMode(UiMode.Add);
-                txtMaKH.Focus();
-            }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionAdd); return; }
+            ClearInputs();
+            SetMode(UiMode.Add);
+            txtMaKH.Focus();
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionDelete); return; }
-                var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
-                if (row == null) { ShowWarn(Res.SelectRowToEdit); return; }
-                DisplayRow(row);
-                SetMode(UiMode.Edit);
-                txtTenKH.Focus();
-            }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionEdit); return; }
+            var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
+            if (row == null) { ShowWarn(Res.SelectRowToEdit); return; }
+            DisplayRow(row);
+            SetMode(UiMode.Edit);
+            txtTenKH.Focus();
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
@@ -98,13 +95,13 @@ namespace QuanLyCuaHangRuou.GUI
                     TenKH = txtTenKH.Text.Trim(),
                     SoDienThoai = txtSDT.Text.Trim(),
                     DiaChi = txtDiaChi.Text.Trim(),
+                    TrangThai = cboTrangThai.SelectedItem?.ToString() ?? Res.StatusActive,
                     HinhPath = (picKhachHang.Tag as string) ?? ""
                 };
 
                 if (_mode == UiMode.Add)
                 {
                     if (KhachHangDal.GetById(entity.MaKH) != null) { ShowWarn(Res.CodeExists); return; }
-                    entity.TrangThai = Res.StatusActive;
                     KhachHangDal.Add(entity);
                     ShowInfo(Res.AddSuccess);
                 }
@@ -122,7 +119,8 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
-            try { ClearInputs(); SetMode(UiMode.View); } catch { }
+            ClearInputs();
+            SetMode(UiMode.View);
         }
 
         private void btnTim_Click(object sender, EventArgs e)
@@ -133,23 +131,22 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnLamMoi_Click(object sender, EventArgs e)
         {
-            try { txtTim.Clear(); LoadData(); ClearInputs(); SetMode(UiMode.View); }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            txtTim.Clear();
+            LoadData();
+            ClearInputs();
+            SetMode(UiMode.View);
         }
 
         private void btnChonHinh_Click(object sender, EventArgs e)
         {
-            try
-            {
-                using (var ofd = new OpenFileDialog { Filter = "Image|*.jpg;*.png;*.bmp" })
-                    if (ofd.ShowDialog() == DialogResult.OK) { SetImage(ofd.FileName); picKhachHang.Tag = ofd.FileName; }
-            }
-            catch { }
+            using (var ofd = new OpenFileDialog { Filter = "Image|*.jpg;*.png;*.bmp" })
+                if (ofd.ShowDialog() == DialogResult.OK) { SetImage(ofd.FileName); picKhachHang.Tag = ofd.FileName; }
         }
 
         private void btnXoaHinh_Click(object sender, EventArgs e)
         {
-            try { ClearImage(); picKhachHang.Tag = ""; } catch { }
+            ClearImage();
+            picKhachHang.Tag = "";
         }
 
         private void txtSDT_KeyPress(object sender, KeyPressEventArgs e)
@@ -160,55 +157,53 @@ namespace QuanLyCuaHangRuou.GUI
         // === HELPERS ===
         private void LoadData(string kw = null)
         {
-            try
-            {
-                dgvKhachHang.DataSource = string.IsNullOrWhiteSpace(kw) ? KhachHangDal.GetAllForGrid() : KhachHangDal.SearchForGrid(kw);
-                WinFormsExtensions.HideIfExists(dgvKhachHang, "HinhPath");
-            }
-            catch (Exception ex) { throw new Exception("L\u1ED7i t\u1EA3i d\u1EEF li\u1EC7u: " + DbConfig.GetInnerMsg(ex), ex); }
+            dgvKhachHang.DataSource = string.IsNullOrWhiteSpace(kw) ? KhachHangDal.GetAllForGrid() : KhachHangDal.SearchForGrid(kw);
+            WinFormsExtensions.HideIfExists(dgvKhachHang, "HinhPath");
         }
 
         private void DisplayRow(KhachHangDal.KhachHangGridRow row)
         {
-            try
-            {
-                txtMaKH.Text = row.MaKH;
-                txtTenKH.Text = row.TenKH;
-                txtSDT.Text = row.SoDienThoai;
-                txtDiaChi.Text = row.DiaChi;
-                SetImage(row.HinhPath);
-            }
-            catch { }
+            txtMaKH.Text = row.MaKH;
+            txtTenKH.Text = row.TenKH;
+            txtSDT.Text = row.SoDienThoai;
+            txtDiaChi.Text = row.DiaChi;
+
+            int idx = cboTrangThai.FindStringExact(row.TrangThai ?? "");
+            cboTrangThai.SelectedIndex = idx >= 0 ? idx : 0;
+
+            SetImage(row.HinhPath);
         }
 
         private void SetMode(UiMode mode)
         {
-            try
-            {
-                _mode = mode;
-                bool canEdit = AppSession.CanEditCatalog;
-                bool canDel = AppSession.CanDeleteCustomer;
-                bool isView = mode == UiMode.View;
+            _mode = mode;
+            bool canEdit = AppSession.CanEditCatalog;
+            bool canDel = AppSession.CanDeleteCustomer;
+            bool isView = mode == UiMode.View;
 
-                btnThem.Enabled = isView && canEdit;
-                btnSua.Enabled = isView && canEdit;
-                btnXoa.Enabled = isView && canDel;
-                btnLuu.Enabled = !isView;
-                btnHuy.Enabled = !isView;
+            btnThem.Enabled = isView && canEdit;
+            btnSua.Enabled = isView && canEdit;
+            btnXoa.Enabled = isView && canDel;
+            btnLuu.Enabled = !isView;
+            btnHuy.Enabled = !isView;
 
-                txtMaKH.ReadOnly = isView || mode == UiMode.Edit;
-                txtTenKH.ReadOnly = isView;
-                txtSDT.ReadOnly = isView;
-                txtDiaChi.ReadOnly = isView;
-                btnChonHinh.Enabled = !isView;
-                btnXoaHinh.Enabled = !isView;
-            }
-            catch { }
+            txtMaKH.ReadOnly = isView || mode == UiMode.Edit;
+            txtTenKH.ReadOnly = isView;
+            txtSDT.ReadOnly = isView;
+            txtDiaChi.ReadOnly = isView;
+            cboTrangThai.Enabled = !isView;
+            btnChonHinh.Enabled = !isView;
+            btnXoaHinh.Enabled = !isView;
         }
 
         private void ClearInputs()
         {
-            try { txtMaKH.Clear(); txtTenKH.Clear(); txtSDT.Clear(); txtDiaChi.Clear(); ClearImage(); } catch { }
+            txtMaKH.Clear();
+            txtTenKH.Clear();
+            txtSDT.Clear();
+            txtDiaChi.Clear();
+            cboTrangThai.SelectedIndex = 0;
+            ClearImage();
         }
 
         private void SetImage(string path)
@@ -228,7 +223,9 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void ClearImage()
         {
-            try { picKhachHang.Image?.Dispose(); picKhachHang.Image = null; picKhachHang.Tag = null; } catch { }
+            picKhachHang.Image?.Dispose();
+            picKhachHang.Image = null;
+            picKhachHang.Tag = null;
         }
 
         private void ShowWarn(string msg) => MessageBox.Show(this, msg, Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);

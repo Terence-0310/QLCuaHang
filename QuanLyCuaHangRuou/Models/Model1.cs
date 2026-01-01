@@ -21,6 +21,7 @@ namespace QuanLyCuaHangRuou
         public virtual DbSet<NhanVien> NhanViens { get; set; }
         public virtual DbSet<TaiKhoan> TaiKhoans { get; set; }
         public virtual DbSet<VaiTro> VaiTroes { get; set; }
+        public virtual DbSet<ViTriLuuTru> ViTriLuuTrus { get; set; }
         public virtual DbSet<vw_DoanhThu> vw_DoanhThu { get; set; }
         public virtual DbSet<vw_TonKho> vw_TonKho { get; set; }
 

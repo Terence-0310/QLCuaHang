@@ -19,6 +19,9 @@ namespace QuanLyCuaHangRuou.GUI
             {
                 WinFormsExtensions.SetDoubleBuffered(dgvDoUong);
                 WinFormsExtensions.AttachDataErrorHandler(dgvDoUong);
+                dtpHanSuDung.Value = DateTime.Now.AddYears(1);
+                chkHanSuDung.Checked = false;
+                dtpHanSuDung.Enabled = false;
                 LoadData();
                 SetMode(UiMode.View);
             }
@@ -99,6 +102,8 @@ namespace QuanLyCuaHangRuou.GUI
                     TenDoUong = txtTenDoUong.Text.Trim(),
                     DonGia = decimal.Parse(txtDonGia.Text.Trim()),
                     SoLuongTon = int.Parse(txtSoLuongTon.Text.Trim()),
+                    DungTich = string.IsNullOrWhiteSpace(txtDungTich.Text) ? (decimal?)null : decimal.Parse(txtDungTich.Text.Trim()),
+                    HanSuDung = chkHanSuDung.Checked ? dtpHanSuDung.Value.Date : (DateTime?)null,
                     GhiChu = txtGhiChu.Text.Trim(),
                     HinhPath = (picDoUong.Tag as string) ?? ""
                 };
@@ -163,6 +168,16 @@ namespace QuanLyCuaHangRuou.GUI
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar)) e.Handled = true;
         }
 
+        private void txtDungTich_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.' && e.KeyChar != ',') e.Handled = true;
+        }
+
+        private void chkHanSuDung_CheckedChanged(object sender, EventArgs e)
+        {
+            dtpHanSuDung.Enabled = chkHanSuDung.Checked && _mode != UiMode.View;
+        }
+
         // === HELPERS ===
         private void LoadData(string kw = null)
         {
@@ -182,6 +197,19 @@ namespace QuanLyCuaHangRuou.GUI
                 txtTenDoUong.Text = row.TenDoUong;
                 txtDonGia.Text = row.DonGia.ToString("0");
                 txtSoLuongTon.Text = row.SoLuongTon.ToString();
+                txtDungTich.Text = row.DungTich?.ToString("0") ?? "";
+                
+                if (row.HanSuDung.HasValue)
+                {
+                    chkHanSuDung.Checked = true;
+                    dtpHanSuDung.Value = row.HanSuDung.Value;
+                }
+                else
+                {
+                    chkHanSuDung.Checked = false;
+                    dtpHanSuDung.Value = DateTime.Now.AddYears(1);
+                }
+                
                 txtGhiChu.Text = row.GhiChu ?? "";
                 _currentMaLoai = row.MaLoai;
                 SetImage(row.HinhPath);
@@ -208,6 +236,9 @@ namespace QuanLyCuaHangRuou.GUI
                 txtTenDoUong.ReadOnly = isView;
                 txtDonGia.ReadOnly = isView;
                 txtSoLuongTon.ReadOnly = isView;
+                txtDungTich.ReadOnly = isView;
+                dtpHanSuDung.Enabled = !isView && chkHanSuDung.Checked;
+                chkHanSuDung.Enabled = !isView;
                 txtGhiChu.ReadOnly = isView;
                 btnChonHinh.Enabled = !isView;
                 btnXoaHinh.Enabled = !isView;
@@ -220,7 +251,10 @@ namespace QuanLyCuaHangRuou.GUI
             try
             {
                 txtMaDoUong.Clear(); txtTenDoUong.Clear(); txtDonGia.Clear();
-                txtSoLuongTon.Clear(); txtGhiChu.Clear(); _currentMaLoai = null; ClearImage();
+                txtSoLuongTon.Clear(); txtDungTich.Clear(); txtGhiChu.Clear(); 
+                chkHanSuDung.Checked = false;
+                dtpHanSuDung.Value = DateTime.Now.AddYears(1);
+                _currentMaLoai = null; ClearImage();
             }
             catch { }
         }
@@ -231,6 +265,11 @@ namespace QuanLyCuaHangRuou.GUI
             if (string.IsNullOrWhiteSpace(txtTenDoUong.Text)) { ShowWarn(Res.EnterName); return false; }
             if (!decimal.TryParse(txtDonGia.Text, out var price) || price < 0) { ShowWarn(Res.InvalidPrice); return false; }
             if (!int.TryParse(txtSoLuongTon.Text, out var qty) || qty < 0) { ShowWarn(Res.InvalidQuantity); return false; }
+            if (!string.IsNullOrWhiteSpace(txtDungTich.Text) && (!decimal.TryParse(txtDungTich.Text, out var dt) || dt <= 0)) 
+            { 
+                ShowWarn("Dung tích không hợp lệ"); 
+                return false; 
+            }
             return true;
         }
 

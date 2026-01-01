@@ -10,6 +10,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBanHang));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.grpThongTin = new System.Windows.Forms.GroupBox();
             this.tableHeader = new System.Windows.Forms.TableLayoutPanel();
@@ -467,6 +468,7 @@
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.splitContainer);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmBanHang";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Text = "Bán hàng";

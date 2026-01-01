@@ -7,19 +7,20 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmNhanVien));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.grpThongTin = new System.Windows.Forms.GroupBox();
             this.tableInputs = new System.Windows.Forms.TableLayoutPanel();
             this.lblMa = new System.Windows.Forms.Label();
             this.txtMaNV = new System.Windows.Forms.TextBox();
-            this.lblTen = new System.Windows.Forms.Label();
-            this.txtTenNV = new System.Windows.Forms.TextBox();
             this.lblSDT = new System.Windows.Forms.Label();
             this.txtSDT = new System.Windows.Forms.TextBox();
-            this.lblDiaChi = new System.Windows.Forms.Label();
-            this.txtDiaChi = new System.Windows.Forms.TextBox();
+            this.lblTen = new System.Windows.Forms.Label();
+            this.txtTenNV = new System.Windows.Forms.TextBox();
             this.lblVaiTro = new System.Windows.Forms.Label();
             this.cboVaiTro = new System.Windows.Forms.ComboBox();
+            this.lblDiaChi = new System.Windows.Forms.Label();
+            this.txtDiaChi = new System.Windows.Forms.TextBox();
             this.lblTrangThai = new System.Windows.Forms.Label();
             this.cboTrangThai = new System.Windows.Forms.ComboBox();
             this.panelBottom = new System.Windows.Forms.Panel();
@@ -54,8 +55,14 @@
             this.splitContainer.Location = new System.Drawing.Point(10, 10);
             this.splitContainer.Name = "splitContainer";
             this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer.Panel1
+            // 
             this.splitContainer.Panel1.Controls.Add(this.grpThongTin);
             this.splitContainer.Panel1.Controls.Add(this.panelBottom);
+            // 
+            // splitContainer.Panel2
+            // 
             this.splitContainer.Panel2.Controls.Add(this.dgvNhanVien);
             this.splitContainer.Size = new System.Drawing.Size(964, 541);
             this.splitContainer.SplitterDistance = 200;
@@ -71,26 +78,23 @@
             this.grpThongTin.Size = new System.Drawing.Size(964, 150);
             this.grpThongTin.TabIndex = 0;
             this.grpThongTin.TabStop = false;
-            this.grpThongTin.Text = "Thong tin nhan vien";
+            this.grpThongTin.Text = "Thông tin nhân viên";
             // 
-            // tableInputs - 4 dong x 4 cot
+            // tableInputs
             // 
             this.tableInputs.ColumnCount = 4;
             this.tableInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
             this.tableInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 90F));
             this.tableInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            // Dong 1: Ma NV, SDT
             this.tableInputs.Controls.Add(this.lblMa, 0, 0);
             this.tableInputs.Controls.Add(this.txtMaNV, 1, 0);
             this.tableInputs.Controls.Add(this.lblSDT, 2, 0);
             this.tableInputs.Controls.Add(this.txtSDT, 3, 0);
-            // Dong 2: Ten NV, Vai tro
             this.tableInputs.Controls.Add(this.lblTen, 0, 1);
             this.tableInputs.Controls.Add(this.txtTenNV, 1, 1);
             this.tableInputs.Controls.Add(this.lblVaiTro, 2, 1);
             this.tableInputs.Controls.Add(this.cboVaiTro, 3, 1);
-            // Dong 3: Dia chi (span 3 cot), Trang thai
             this.tableInputs.Controls.Add(this.lblDiaChi, 0, 2);
             this.tableInputs.Controls.Add(this.txtDiaChi, 1, 2);
             this.tableInputs.Controls.Add(this.lblTrangThai, 2, 2);
@@ -112,7 +116,7 @@
             this.lblMa.Name = "lblMa";
             this.lblMa.Size = new System.Drawing.Size(84, 23);
             this.lblMa.TabIndex = 0;
-            this.lblMa.Text = "Ma NV:";
+            this.lblMa.Text = "Mã NV:";
             this.lblMa.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtMaNV
@@ -131,7 +135,7 @@
             this.lblSDT.Name = "lblSDT";
             this.lblSDT.Size = new System.Drawing.Size(84, 23);
             this.lblSDT.TabIndex = 2;
-            this.lblSDT.Text = "SDT:";
+            this.lblSDT.Text = "SĐT:";
             this.lblSDT.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtSDT
@@ -150,7 +154,7 @@
             this.lblTen.Name = "lblTen";
             this.lblTen.Size = new System.Drawing.Size(84, 23);
             this.lblTen.TabIndex = 4;
-            this.lblTen.Text = "Ten NV:";
+            this.lblTen.Text = "Tên NV:";
             this.lblTen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtTenNV
@@ -169,7 +173,7 @@
             this.lblVaiTro.Name = "lblVaiTro";
             this.lblVaiTro.Size = new System.Drawing.Size(84, 23);
             this.lblVaiTro.TabIndex = 6;
-            this.lblVaiTro.Text = "Vai tro:";
+            this.lblVaiTro.Text = "Vai trò:";
             this.lblVaiTro.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cboVaiTro
@@ -189,7 +193,7 @@
             this.lblDiaChi.Name = "lblDiaChi";
             this.lblDiaChi.Size = new System.Drawing.Size(84, 23);
             this.lblDiaChi.TabIndex = 10;
-            this.lblDiaChi.Text = "Dia chi:";
+            this.lblDiaChi.Text = "Địa chỉ:";
             this.lblDiaChi.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtDiaChi
@@ -208,7 +212,7 @@
             this.lblTrangThai.Name = "lblTrangThai";
             this.lblTrangThai.Size = new System.Drawing.Size(84, 23);
             this.lblTrangThai.TabIndex = 8;
-            this.lblTrangThai.Text = "Trang thai:";
+            this.lblTrangThai.Text = "Trạng thái:";
             this.lblTrangThai.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cboTrangThai
@@ -248,9 +252,9 @@
             this.lblTim.AutoSize = true;
             this.lblTim.Location = new System.Drawing.Point(8, 17);
             this.lblTim.Name = "lblTim";
-            this.lblTim.Size = new System.Drawing.Size(70, 20);
+            this.lblTim.Size = new System.Drawing.Size(73, 20);
             this.lblTim.TabIndex = 0;
-            this.lblTim.Text = "Tim kiem:";
+            this.lblTim.Text = "Tìm kiếm:";
             // 
             // txtTim
             // 
@@ -265,7 +269,7 @@
             this.btnTim.Name = "btnTim";
             this.btnTim.Size = new System.Drawing.Size(75, 27);
             this.btnTim.TabIndex = 2;
-            this.btnTim.Text = "Tim";
+            this.btnTim.Text = "Tìm";
             this.btnTim.Click += new System.EventHandler(this.btnTim_Click);
             // 
             // btnLamMoi
@@ -274,7 +278,7 @@
             this.btnLamMoi.Name = "btnLamMoi";
             this.btnLamMoi.Size = new System.Drawing.Size(85, 27);
             this.btnLamMoi.TabIndex = 3;
-            this.btnLamMoi.Text = "Lam moi";
+            this.btnLamMoi.Text = "Làm mới";
             this.btnLamMoi.Click += new System.EventHandler(this.btnLamMoi_Click);
             // 
             // panelButtons
@@ -299,7 +303,7 @@
             this.btnThem.Name = "btnThem";
             this.btnThem.Size = new System.Drawing.Size(80, 27);
             this.btnThem.TabIndex = 0;
-            this.btnThem.Text = "Them";
+            this.btnThem.Text = "Thêm";
             this.btnThem.UseVisualStyleBackColor = false;
             this.btnThem.Click += new System.EventHandler(this.btnThem_Click);
             // 
@@ -312,7 +316,7 @@
             this.btnSua.Name = "btnSua";
             this.btnSua.Size = new System.Drawing.Size(80, 27);
             this.btnSua.TabIndex = 1;
-            this.btnSua.Text = "Sua";
+            this.btnSua.Text = "Sửa";
             this.btnSua.UseVisualStyleBackColor = false;
             this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
             // 
@@ -325,7 +329,7 @@
             this.btnXoa.Name = "btnXoa";
             this.btnXoa.Size = new System.Drawing.Size(80, 27);
             this.btnXoa.TabIndex = 2;
-            this.btnXoa.Text = "Xoa";
+            this.btnXoa.Text = "Xóa";
             this.btnXoa.UseVisualStyleBackColor = false;
             this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
             // 
@@ -337,7 +341,7 @@
             this.btnLuu.Name = "btnLuu";
             this.btnLuu.Size = new System.Drawing.Size(80, 27);
             this.btnLuu.TabIndex = 3;
-            this.btnLuu.Text = "Luu";
+            this.btnLuu.Text = "Lưu";
             this.btnLuu.UseVisualStyleBackColor = false;
             this.btnLuu.Click += new System.EventHandler(this.btnLuu_Click);
             // 
@@ -350,7 +354,7 @@
             this.btnHuy.Name = "btnHuy";
             this.btnHuy.Size = new System.Drawing.Size(80, 27);
             this.btnHuy.TabIndex = 4;
-            this.btnHuy.Text = "Huy";
+            this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = false;
             this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
             // 
@@ -379,9 +383,10 @@
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.splitContainer);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmNhanVien";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Text = "Quan ly nhan vien";
+            this.Text = "Quản lý nhân viên";
             this.Load += new System.EventHandler(this.FrmNhanVien_Load);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
@@ -396,6 +401,7 @@
             this.panelButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvNhanVien)).EndInit();
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.SplitContainer splitContainer;

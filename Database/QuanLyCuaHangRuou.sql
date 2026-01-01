@@ -280,6 +280,7 @@ GO
 
 
 SELECT * FROM VaiTro
+SELECT * FROM TaiKhoan
 SELECT * FROM dbo.NhanVien;
 SELECT * FROM dbo.KhachHang;
 SELECT * FROM dbo.DoUong;

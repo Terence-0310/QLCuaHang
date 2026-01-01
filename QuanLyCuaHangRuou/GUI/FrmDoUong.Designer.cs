@@ -14,6 +14,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDoUong));
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.grpThongTin = new System.Windows.Forms.GroupBox();
             this.tableInputs = new System.Windows.Forms.TableLayoutPanel();
@@ -25,8 +26,13 @@
             this.txtDonGia = new System.Windows.Forms.TextBox();
             this.lblSoLuong = new System.Windows.Forms.Label();
             this.txtSoLuongTon = new System.Windows.Forms.TextBox();
+            this.lblDungTich = new System.Windows.Forms.Label();
+            this.txtDungTich = new System.Windows.Forms.TextBox();
+            this.lblHanSuDung = new System.Windows.Forms.Label();
+            this.dtpHanSuDung = new System.Windows.Forms.DateTimePicker();
             this.lblGhiChu = new System.Windows.Forms.Label();
             this.txtGhiChu = new System.Windows.Forms.TextBox();
+            this.chkHanSuDung = new System.Windows.Forms.CheckBox();
             this.grpHinh = new System.Windows.Forms.GroupBox();
             this.picDoUong = new System.Windows.Forms.PictureBox();
             this.panelImageButtons = new System.Windows.Forms.Panel();
@@ -78,7 +84,7 @@
             // 
             this.splitContainer.Panel2.Controls.Add(this.dgvDoUong);
             this.splitContainer.Size = new System.Drawing.Size(964, 541);
-            this.splitContainer.SplitterDistance = 220;
+            this.splitContainer.SplitterDistance = 250;
             this.splitContainer.TabIndex = 0;
             // 
             // grpThongTin
@@ -88,7 +94,7 @@
             this.grpThongTin.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.grpThongTin.Location = new System.Drawing.Point(0, 0);
             this.grpThongTin.Name = "grpThongTin";
-            this.grpThongTin.Size = new System.Drawing.Size(764, 170);
+            this.grpThongTin.Size = new System.Drawing.Size(764, 200);
             this.grpThongTin.TabIndex = 0;
             this.grpThongTin.TabStop = false;
             this.grpThongTin.Text = "Thông tin đồ uống";
@@ -108,16 +114,22 @@
             this.tableInputs.Controls.Add(this.txtDonGia, 3, 0);
             this.tableInputs.Controls.Add(this.lblSoLuong, 2, 1);
             this.tableInputs.Controls.Add(this.txtSoLuongTon, 3, 1);
-            this.tableInputs.Controls.Add(this.lblGhiChu, 0, 2);
-            this.tableInputs.Controls.Add(this.txtGhiChu, 1, 2);
+            this.tableInputs.Controls.Add(this.lblDungTich, 0, 2);
+            this.tableInputs.Controls.Add(this.txtDungTich, 1, 2);
+            this.tableInputs.Controls.Add(this.lblHanSuDung, 2, 2);
+            this.tableInputs.Controls.Add(this.dtpHanSuDung, 3, 2);
+            this.tableInputs.Controls.Add(this.lblGhiChu, 0, 3);
+            this.tableInputs.Controls.Add(this.txtGhiChu, 1, 3);
+            this.tableInputs.Controls.Add(this.chkHanSuDung, 3, 3);
             this.tableInputs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableInputs.Location = new System.Drawing.Point(3, 23);
             this.tableInputs.Name = "tableInputs";
-            this.tableInputs.RowCount = 3;
+            this.tableInputs.RowCount = 4;
+            this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableInputs.Size = new System.Drawing.Size(758, 144);
+            this.tableInputs.Size = new System.Drawing.Size(758, 174);
             this.tableInputs.TabIndex = 0;
             // 
             // lblMa
@@ -200,10 +212,51 @@
             this.txtSoLuongTon.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtSoLuongTon.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSoLuongTon_KeyPress);
             // 
+            // lblDungTich
+            // 
+            this.lblDungTich.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblDungTich.Location = new System.Drawing.Point(3, 70);
+            this.lblDungTich.Name = "lblDungTich";
+            this.lblDungTich.Size = new System.Drawing.Size(94, 23);
+            this.lblDungTich.TabIndex = 10;
+            this.lblDungTich.Text = "Dung tích (ml):";
+            this.lblDungTich.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtDungTich
+            // 
+            this.txtDungTich.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDungTich.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.txtDungTich.Location = new System.Drawing.Point(103, 73);
+            this.txtDungTich.Name = "txtDungTich";
+            this.txtDungTich.Size = new System.Drawing.Size(273, 27);
+            this.txtDungTich.TabIndex = 11;
+            this.txtDungTich.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtDungTich.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDungTich_KeyPress);
+            // 
+            // lblHanSuDung
+            // 
+            this.lblHanSuDung.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblHanSuDung.Location = new System.Drawing.Point(382, 70);
+            this.lblHanSuDung.Name = "lblHanSuDung";
+            this.lblHanSuDung.Size = new System.Drawing.Size(94, 23);
+            this.lblHanSuDung.TabIndex = 12;
+            this.lblHanSuDung.Text = "Hạn sử dụng:";
+            this.lblHanSuDung.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // dtpHanSuDung
+            // 
+            this.dtpHanSuDung.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtpHanSuDung.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.dtpHanSuDung.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpHanSuDung.Location = new System.Drawing.Point(482, 73);
+            this.dtpHanSuDung.Name = "dtpHanSuDung";
+            this.dtpHanSuDung.Size = new System.Drawing.Size(273, 27);
+            this.dtpHanSuDung.TabIndex = 13;
+            // 
             // lblGhiChu
             // 
             this.lblGhiChu.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblGhiChu.Location = new System.Drawing.Point(3, 70);
+            this.lblGhiChu.Location = new System.Drawing.Point(3, 105);
             this.lblGhiChu.Name = "lblGhiChu";
             this.lblGhiChu.Size = new System.Drawing.Size(94, 23);
             this.lblGhiChu.TabIndex = 8;
@@ -212,14 +265,24 @@
             // 
             // txtGhiChu
             // 
-            this.tableInputs.SetColumnSpan(this.txtGhiChu, 3);
+            this.tableInputs.SetColumnSpan(this.txtGhiChu, 2);
             this.txtGhiChu.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtGhiChu.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtGhiChu.Location = new System.Drawing.Point(103, 73);
+            this.txtGhiChu.Location = new System.Drawing.Point(103, 108);
             this.txtGhiChu.Multiline = true;
             this.txtGhiChu.Name = "txtGhiChu";
-            this.txtGhiChu.Size = new System.Drawing.Size(652, 68);
+            this.txtGhiChu.Size = new System.Drawing.Size(373, 63);
             this.txtGhiChu.TabIndex = 9;
+            // 
+            // chkHanSuDung
+            // 
+            this.chkHanSuDung.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.chkHanSuDung.Location = new System.Drawing.Point(482, 108);
+            this.chkHanSuDung.Name = "chkHanSuDung";
+            this.chkHanSuDung.Size = new System.Drawing.Size(150, 23);
+            this.chkHanSuDung.TabIndex = 14;
+            this.chkHanSuDung.Text = "Có hạn sử dụng";
+            this.chkHanSuDung.CheckedChanged += new System.EventHandler(this.chkHanSuDung_CheckedChanged);
             // 
             // grpHinh
             // 
@@ -229,7 +292,7 @@
             this.grpHinh.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.grpHinh.Location = new System.Drawing.Point(764, 0);
             this.grpHinh.Name = "grpHinh";
-            this.grpHinh.Size = new System.Drawing.Size(200, 170);
+            this.grpHinh.Size = new System.Drawing.Size(200, 200);
             this.grpHinh.TabIndex = 1;
             this.grpHinh.TabStop = false;
             this.grpHinh.Text = "Hình ảnh";
@@ -241,7 +304,7 @@
             this.picDoUong.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picDoUong.Location = new System.Drawing.Point(3, 23);
             this.picDoUong.Name = "picDoUong";
-            this.picDoUong.Size = new System.Drawing.Size(194, 114);
+            this.picDoUong.Size = new System.Drawing.Size(194, 144);
             this.picDoUong.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picDoUong.TabIndex = 0;
             this.picDoUong.TabStop = false;
@@ -251,7 +314,7 @@
             this.panelImageButtons.Controls.Add(this.btnChonHinh);
             this.panelImageButtons.Controls.Add(this.btnXoaHinh);
             this.panelImageButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelImageButtons.Location = new System.Drawing.Point(3, 137);
+            this.panelImageButtons.Location = new System.Drawing.Point(3, 167);
             this.panelImageButtons.Name = "panelImageButtons";
             this.panelImageButtons.Size = new System.Drawing.Size(194, 30);
             this.panelImageButtons.TabIndex = 1;
@@ -279,7 +342,7 @@
             this.panelBottom.Controls.Add(this.panelSearch);
             this.panelBottom.Controls.Add(this.panelButtons);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 170);
+            this.panelBottom.Location = new System.Drawing.Point(0, 200);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(964, 50);
             this.panelBottom.TabIndex = 2;
@@ -421,7 +484,7 @@
             this.dgvDoUong.ReadOnly = true;
             this.dgvDoUong.RowHeadersWidth = 51;
             this.dgvDoUong.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDoUong.Size = new System.Drawing.Size(964, 317);
+            this.dgvDoUong.Size = new System.Drawing.Size(964, 287);
             this.dgvDoUong.TabIndex = 0;
             this.dgvDoUong.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDoUong_CellClick);
             // 
@@ -432,6 +495,7 @@
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.splitContainer);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmDoUong";
             this.Padding = new System.Windows.Forms.Padding(10);
             this.Text = "Quản lý đồ uống";
@@ -460,8 +524,10 @@
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.GroupBox grpThongTin;
         private System.Windows.Forms.TableLayoutPanel tableInputs;
-        private System.Windows.Forms.Label lblMa, lblTen, lblDonGia, lblSoLuong, lblGhiChu, lblTim;
-        private System.Windows.Forms.TextBox txtMaDoUong, txtTenDoUong, txtDonGia, txtSoLuongTon, txtGhiChu, txtTim;
+        private System.Windows.Forms.Label lblMa, lblTen, lblDonGia, lblSoLuong, lblDungTich, lblHanSuDung, lblGhiChu, lblTim;
+        private System.Windows.Forms.TextBox txtMaDoUong, txtTenDoUong, txtDonGia, txtSoLuongTon, txtDungTich, txtGhiChu, txtTim;
+        private System.Windows.Forms.DateTimePicker dtpHanSuDung;
+        private System.Windows.Forms.CheckBox chkHanSuDung;
         private System.Windows.Forms.GroupBox grpHinh;
         private System.Windows.Forms.PictureBox picDoUong;
         private System.Windows.Forms.Panel panelImageButtons, panelBottom, panelSearch, panelButtons;
