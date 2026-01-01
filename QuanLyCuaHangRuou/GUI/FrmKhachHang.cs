@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using QuanLyCuaHangRuou.BUS;
 using QuanLyCuaHangRuou.DAL;
 using QuanLyCuaHangRuou.Common;
 
@@ -18,11 +19,16 @@ namespace QuanLyCuaHangRuou.GUI
             {
                 WinFormsExtensions.SetDoubleBuffered(dgvKhachHang);
                 WinFormsExtensions.AttachDataErrorHandler(dgvKhachHang);
+                
+                // Set labels
+                lblTim.Text = Res.HeaderTimKiem;
+                this.Text = Res.FrmKhachHangTitle;
+                
                 LoadTrangThaiCombo();
                 LoadData();
                 SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError(Res.Error + ": " + ex.Message); }
         }
 
         private void LoadTrangThaiCombo()
@@ -42,7 +48,6 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionAdd); return; }
             ClearInputs();
             SetMode(UiMode.Add);
             txtMaKH.Focus();
@@ -50,7 +55,6 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionEdit); return; }
             var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
             if (row == null) { ShowWarn(Res.SelectRowToEdit); return; }
             DisplayRow(row);
@@ -60,35 +64,34 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
+            var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
+            if (row == null) { ShowWarn(Res.SelectRowToDelete); return; }
+            if (Confirm(Res.ConfirmDelete) != DialogResult.Yes) return;
+
+            btnXoa.Enabled = false;
+            Application.DoEvents();
+
             try
             {
-                if (!AppSession.CanDeleteCustomer) { ShowWarn(Res.NoPermissionDelete); return; }
-                var row = dgvKhachHang.CurrentRow?.DataBoundItem as KhachHangDal.KhachHangGridRow;
-                if (row == null) { ShowWarn(Res.SelectRowToDelete); return; }
-                if (Confirm(Res.ConfirmDelete) != DialogResult.Yes) return;
-
-                btnXoa.Enabled = false;
-                Application.DoEvents();
-
-                KhachHangDal.Delete(row.MaKH);
-                LoadData(); ClearInputs();
-                ShowInfo(Res.DeleteSuccess);
+                var result = KhachHangBus.Delete(row.MaKH);
+                LoadData(); 
+                ClearInputs();
+                
+                if (result.Success)
+                    ShowInfo(result.Message ?? Res.DeleteSuccess);
+                else
+                    ShowWarn(result.Message);
             }
-            catch (InvalidOperationException ex) { LoadData(); ClearInputs(); ShowInfo(ex.Message); }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
             finally { btnXoa.Enabled = true; }
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
+            btnLuu.Enabled = false;
+            Application.DoEvents();
+
             try
             {
-                if (string.IsNullOrWhiteSpace(txtMaKH.Text) || string.IsNullOrWhiteSpace(txtTenKH.Text))
-                { ShowWarn(Res.EnterCodeAndName); return; }
-
-                btnLuu.Enabled = false;
-                Application.DoEvents();
-
                 var entity = new KhachHang
                 {
                     MaKH = txtMaKH.Text.Trim(),
@@ -99,21 +102,23 @@ namespace QuanLyCuaHangRuou.GUI
                     HinhPath = (picKhachHang.Tag as string) ?? ""
                 };
 
+                BusResult result;
                 if (_mode == UiMode.Add)
+                    result = KhachHangBus.Add(entity);
+                else
+                    result = KhachHangBus.Update(entity);
+
+                if (result.Success)
                 {
-                    if (KhachHangDal.GetById(entity.MaKH) != null) { ShowWarn(Res.CodeExists); return; }
-                    KhachHangDal.Add(entity);
-                    ShowInfo(Res.AddSuccess);
+                    ShowInfo(result.Message);
+                    LoadData();
+                    SetMode(UiMode.View);
                 }
                 else
                 {
-                    KhachHangDal.Update(entity);
-                    ShowInfo(Res.UpdateSuccess);
+                    ShowWarn(result.Message);
                 }
-                LoadData();
-                SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
             finally { btnLuu.Enabled = true; }
         }
 
@@ -125,8 +130,7 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnTim_Click(object sender, EventArgs e)
         {
-            try { LoadData(txtTim.Text.Trim()); }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            LoadData(txtTim.Text.Trim());
         }
 
         private void btnLamMoi_Click(object sender, EventArgs e)
@@ -157,8 +161,19 @@ namespace QuanLyCuaHangRuou.GUI
         // === HELPERS ===
         private void LoadData(string kw = null)
         {
-            dgvKhachHang.DataSource = string.IsNullOrWhiteSpace(kw) ? KhachHangDal.GetAllForGrid() : KhachHangDal.SearchForGrid(kw);
-            WinFormsExtensions.HideIfExists(dgvKhachHang, "HinhPath");
+            var result = string.IsNullOrWhiteSpace(kw) 
+                ? KhachHangBus.GetAll() 
+                : KhachHangBus.Search(kw);
+            
+            if (result.Success)
+            {
+                dgvKhachHang.DataSource = result.Data;
+                WinFormsExtensions.HideIfExists(dgvKhachHang, "HinhPath");
+            }
+            else
+            {
+                ShowError(result.Message);
+            }
         }
 
         private void DisplayRow(KhachHangDal.KhachHangGridRow row)

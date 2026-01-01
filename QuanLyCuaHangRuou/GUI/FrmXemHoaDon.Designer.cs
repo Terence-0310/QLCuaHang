@@ -105,7 +105,7 @@ namespace QuanLyCuaHangRuou.GUI
             // 
             this.txtPreview.BackColor = System.Drawing.Color.White;
             this.txtPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPreview.Font = new System.Drawing.Font("Consolas", 10F);
+            this.txtPreview.Font = new System.Drawing.Font("Courier New", 10F);
             this.txtPreview.Location = new System.Drawing.Point(0, 50);
             this.txtPreview.Multiline = true;
             this.txtPreview.Name = "txtPreview";

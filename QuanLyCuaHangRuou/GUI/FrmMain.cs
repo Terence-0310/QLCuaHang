@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using QuanLyCuaHangRuou.BUS;
 using QuanLyCuaHangRuou.Common;
-using QuanLyCuaHangRuou.DAL;
 
 namespace QuanLyCuaHangRuou.GUI
 {
@@ -26,7 +26,7 @@ namespace QuanLyCuaHangRuou.GUI
             }
             catch (Exception ex)
             {
-                ShowError("Lỗi khi khởi tạo: " + DbConfig.GetInnerMsg(ex));
+                ShowError("Lỗi khi khởi tạo: " + ex.Message);
             }
         }
 
@@ -53,22 +53,13 @@ namespace QuanLyCuaHangRuou.GUI
         // === MENU HANDLERS ===
         private void mnuDangNhap_Click(object sender, EventArgs e)
         {
-            try
+            using (var frm = new FrmLogin())
             {
-                using (var frm = new FrmLogin())
+                if (frm.ShowDialog(this) == DialogResult.OK)
                 {
-                    if (frm.ShowDialog(this) == DialogResult.OK)
-                    {
-                        AppSession.CurrentUser = frm.LoggedUser;
-                        AppSession.CurrentRole = frm.LoggedRole;
-                        UpdateUserDisplay();
-                        ApplyPermissions();
-                    }
+                    UpdateUserDisplay();
+                    ApplyPermissions();
                 }
-            }
-            catch (Exception ex)
-            {
-                ShowError("Lỗi đăng nhập: " + DbConfig.GetInnerMsg(ex));
             }
         }
 
@@ -76,7 +67,8 @@ namespace QuanLyCuaHangRuou.GUI
         {
             foreach (var child in MdiChildren)
                 try { child.Close(); } catch { }
-            AppSession.Clear();
+            
+            AuthBus.Logout();
             UpdateUserDisplay();
             ApplyPermissions();
         }
@@ -117,7 +109,7 @@ namespace QuanLyCuaHangRuou.GUI
             }
             catch (Exception ex)
             {
-                ShowError("Lỗi khi mở form: " + DbConfig.GetInnerMsg(ex));
+                ShowError("Lỗi khi mở form: " + ex.Message);
             }
         }
 

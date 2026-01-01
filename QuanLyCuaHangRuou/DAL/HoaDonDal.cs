@@ -6,7 +6,7 @@ using System.Linq;
 namespace QuanLyCuaHangRuou.DAL
 {
     /// <summary>
-    /// Quan ly hoa don (de in/xuat)
+    /// Quản lý hóa đơn (để in/xuất)
     /// </summary>
     public static class HoaDonDal
     {
@@ -46,7 +46,7 @@ namespace QuanLyCuaHangRuou.DAL
         }
 
         /// <summary>
-        /// Lay tat ca hoa don
+        /// Lấy tất cả hóa đơn
         /// </summary>
         public static List<HoaDonGridRow> GetAll() => DbConfig.Use(db =>
             db.HoaDons
@@ -66,7 +66,7 @@ namespace QuanLyCuaHangRuou.DAL
                 }).ToList());
 
         /// <summary>
-        /// Lay hoa don theo khoang ngay
+        /// Lấy hóa đơn theo khoảng ngày
         /// </summary>
         public static List<HoaDonGridRow> GetByDateRange(DateTime from, DateTime to) => DbConfig.Use(db =>
         {
@@ -91,7 +91,7 @@ namespace QuanLyCuaHangRuou.DAL
         });
 
         /// <summary>
-        /// Tim kiem hoa don theo ma HD, ten KH, ten NV
+        /// Tìm kiếm hóa đơn theo mã HĐ, tên KH, tên NV
         /// </summary>
         public static List<HoaDonGridRow> Search(string keyword, DateTime? from = null, DateTime? to = null) => DbConfig.Use(db =>
         {
@@ -131,7 +131,7 @@ namespace QuanLyCuaHangRuou.DAL
         });
 
         /// <summary>
-        /// Lay chi tiet hoa don de in
+        /// Lấy chi tiết hóa đơn để in
         /// </summary>
         public static HoaDonPrintDto GetForPrint(string maHd) => DbConfig.Use(db =>
         {

@@ -80,6 +80,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BUS\AuthBus.cs" />
+    <Compile Include="BUS\BanHangBus.cs" />
+    <Compile Include="BUS\BusResult.cs" />
+    <Compile Include="BUS\DoUongBus.cs" />
+    <Compile Include="BUS\HoaDonBus.cs" />
+    <Compile Include="BUS\KhachHangBus.cs" />
+    <Compile Include="BUS\KyGuiRuouBus.cs" />
+    <Compile Include="BUS\LoaiDoUongBus.cs" />
+    <Compile Include="BUS\NhanVienBus.cs" />
+    <Compile Include="BUS\ReportBus.cs" />
+    <Compile Include="BUS\VaiTroBus.cs" />
+    <Compile Include="BUS\ViTriLuuTruBus.cs" />
     <Compile Include="Common\AppSession.cs" />
     <Compile Include="Common\ExcelExporter.cs" />
     <Compile Include="Common\PermissionKeys.cs" />

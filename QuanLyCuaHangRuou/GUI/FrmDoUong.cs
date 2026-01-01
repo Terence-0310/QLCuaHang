@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using QuanLyCuaHangRuou.BUS;
 using QuanLyCuaHangRuou.DAL;
 using QuanLyCuaHangRuou.Common;
 
@@ -19,143 +20,153 @@ namespace QuanLyCuaHangRuou.GUI
             {
                 WinFormsExtensions.SetDoubleBuffered(dgvDoUong);
                 WinFormsExtensions.AttachDataErrorHandler(dgvDoUong);
+                
+                // Set title
+                this.Text = Res.FrmDoUongTitle;
+                lblTim.Text = Res.HeaderTimKiem;
+                
                 dtpHanSuDung.Value = DateTime.Now.AddYears(1);
                 chkHanSuDung.Checked = false;
                 dtpHanSuDung.Enabled = false;
                 LoadData();
                 SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError("Loi khoi tao: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError(Res.Error + ": " + ex.Message); }
         }
 
         private void dgvDoUong_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            try
-            {
-                if (_mode != UiMode.View) return;
-                var row = dgvDoUong.CurrentRow?.DataBoundItem as DoUongDal.DoUongGridRow;
-                if (row != null) DisplayRow(row);
-            }
-            catch { }
+            if (_mode != UiMode.View) return;
+            var row = dgvDoUong.CurrentRow?.DataBoundItem as DoUongDal.DoUongGridRow;
+            if (row != null) DisplayRow(row);
         }
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionDelete); return; }
-                ClearInputs();
-                _currentMaLoai = null;
-                SetMode(UiMode.Add);
-                txtMaDoUong.Focus();
-            }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            ClearInputs();
+            _currentMaLoai = null;
+            SetMode(UiMode.Add);
+            txtMaDoUong.Focus();
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (!AppSession.CanEditCatalog) { ShowWarn(Res.NoPermissionDelete); return; }
-                var row = dgvDoUong.CurrentRow?.DataBoundItem as DoUongDal.DoUongGridRow;
-                if (row == null) { ShowWarn(Res.SelectRowToEdit); return; }
-                DisplayRow(row);
-                SetMode(UiMode.Edit);
-                txtTenDoUong.Focus();
-            }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            var row = dgvDoUong.CurrentRow?.DataBoundItem as DoUongDal.DoUongGridRow;
+            if (row == null) { ShowWarn(Res.SelectRowToEdit); return; }
+            DisplayRow(row);
+            SetMode(UiMode.Edit);
+            txtTenDoUong.Focus();
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
+            var row = dgvDoUong.CurrentRow?.DataBoundItem as DoUongDal.DoUongGridRow;
+            if (row == null) { ShowWarn(Res.SelectRowToDelete); return; }
+            if (Confirm(Res.ConfirmDelete) != DialogResult.Yes) return;
+
+            btnXoa.Enabled = false;
+            Application.DoEvents();
+
             try
             {
-                if (!AppSession.CanDeleteDrink) { ShowWarn(Res.NoPermissionDelete); return; }
-                var row = dgvDoUong.CurrentRow?.DataBoundItem as DoUongDal.DoUongGridRow;
-                if (row == null) { ShowWarn(Res.SelectRowToDelete); return; }
-                if (Confirm(Res.ConfirmDelete) != DialogResult.Yes) return;
+                var result = DoUongBus.Delete(row.MaDoUong);
+                LoadData();
+                ClearInputs();
 
-                btnXoa.Enabled = false;
-                Application.DoEvents();
-
-                DoUongDal.Delete(row.MaDoUong);
-                LoadData(); ClearInputs();
-                ShowInfo(Res.DeleteSuccess);
+                if (result.Success)
+                    ShowInfo(result.Message ?? Res.DeleteSuccess);
+                else
+                    ShowWarn(result.Message);
             }
-            catch (InvalidOperationException ex) { LoadData(); ClearInputs(); ShowInfo(ex.Message); }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
             finally { btnXoa.Enabled = true; }
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
+            btnLuu.Enabled = false;
+            Application.DoEvents();
+
             try
             {
-                if (!ValidateInputs()) return;
+                // Parse dữ liệu từ UI
+                decimal donGia = 0;
+                int soLuongTon = 0;
+                decimal? dungTich = null;
 
-                btnLuu.Enabled = false;
-                Application.DoEvents();
+                if (!string.IsNullOrWhiteSpace(txtDonGia.Text))
+                    decimal.TryParse(txtDonGia.Text.Trim(), out donGia);
+
+                if (!string.IsNullOrWhiteSpace(txtSoLuongTon.Text))
+                    int.TryParse(txtSoLuongTon.Text.Trim(), out soLuongTon);
+
+                if (!string.IsNullOrWhiteSpace(txtDungTich.Text))
+                {
+                    if (decimal.TryParse(txtDungTich.Text.Trim(), out var dt))
+                        dungTich = dt;
+                }
 
                 var entity = new DoUong
                 {
                     MaDoUong = txtMaDoUong.Text.Trim(),
                     TenDoUong = txtTenDoUong.Text.Trim(),
-                    DonGia = decimal.Parse(txtDonGia.Text.Trim()),
-                    SoLuongTon = int.Parse(txtSoLuongTon.Text.Trim()),
-                    DungTich = string.IsNullOrWhiteSpace(txtDungTich.Text) ? (decimal?)null : decimal.Parse(txtDungTich.Text.Trim()),
+                    MaLoai = _currentMaLoai,
+                    DonGia = donGia,
+                    SoLuongTon = soLuongTon,
+                    DungTich = dungTich,
                     HanSuDung = chkHanSuDung.Checked ? dtpHanSuDung.Value.Date : (DateTime?)null,
                     GhiChu = txtGhiChu.Text.Trim(),
                     HinhPath = (picDoUong.Tag as string) ?? ""
                 };
 
+                BusResult result;
                 if (_mode == UiMode.Add)
+                    result = DoUongBus.Add(entity);
+                else
+                    result = DoUongBus.Update(entity);
+
+                if (result.Success)
                 {
-                    if (DoUongDal.GetById(entity.MaDoUong) != null) { ShowWarn(Res.CodeExists); return; }
-                    DoUongDal.Add(entity);
-                    ShowInfo(Res.AddSuccess);
+                    ShowInfo(result.Message);
+                    LoadData();
+                    SetMode(UiMode.View);
                 }
                 else
                 {
-                    DoUongDal.Update(entity);
-                    ShowInfo(Res.UpdateSuccess);
+                    ShowWarn(result.Message);
                 }
-                LoadData();
-                SetMode(UiMode.View);
             }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
             finally { btnLuu.Enabled = true; }
         }
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
-            try { ClearInputs(); SetMode(UiMode.View); } catch { }
+            ClearInputs();
+            SetMode(UiMode.View);
         }
 
         private void btnTim_Click(object sender, EventArgs e)
         {
-            try { LoadData(txtTim.Text.Trim()); }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            LoadData(txtTim.Text.Trim());
         }
 
         private void btnLamMoi_Click(object sender, EventArgs e)
         {
-            try { txtTim.Clear(); LoadData(); ClearInputs(); SetMode(UiMode.View); }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+            txtTim.Clear();
+            LoadData();
+            ClearInputs();
+            SetMode(UiMode.View);
         }
 
         private void btnChonHinh_Click(object sender, EventArgs e)
         {
-            try
-            {
-                using (var ofd = new OpenFileDialog { Filter = "Image|*.jpg;*.png;*.bmp" })
-                    if (ofd.ShowDialog() == DialogResult.OK) { SetImage(ofd.FileName); picDoUong.Tag = ofd.FileName; }
-            }
-            catch { }
+            using (var ofd = new OpenFileDialog { Filter = "Image|*.jpg;*.png;*.bmp" })
+                if (ofd.ShowDialog() == DialogResult.OK) { SetImage(ofd.FileName); picDoUong.Tag = ofd.FileName; }
         }
 
         private void btnXoaHinh_Click(object sender, EventArgs e)
         {
-            try { ClearImage(); picDoUong.Tag = ""; } catch { }
+            ClearImage();
+            picDoUong.Tag = "";
         }
 
         private void txtDonGia_KeyPress(object sender, KeyPressEventArgs e)
@@ -181,96 +192,82 @@ namespace QuanLyCuaHangRuou.GUI
         // === HELPERS ===
         private void LoadData(string kw = null)
         {
-            try
+            var result = string.IsNullOrWhiteSpace(kw)
+                ? DoUongBus.GetAll()
+                : DoUongBus.Search(kw);
+
+            if (result.Success)
             {
-                dgvDoUong.DataSource = string.IsNullOrWhiteSpace(kw) ? DoUongDal.GetAllForGrid() : DoUongDal.SearchForGrid(kw);
+                dgvDoUong.DataSource = result.Data;
                 WinFormsExtensions.HideIfExists(dgvDoUong, "HinhPath", "MaLoai");
             }
-            catch (Exception ex) { throw new Exception("Loi tai du lieu: " + DbConfig.GetInnerMsg(ex), ex); }
+            else
+            {
+                ShowError(result.Message);
+            }
         }
 
         private void DisplayRow(DoUongDal.DoUongGridRow row)
         {
-            try
+            txtMaDoUong.Text = row.MaDoUong;
+            txtTenDoUong.Text = row.TenDoUong;
+            txtDonGia.Text = row.DonGia.ToString("0");
+            txtSoLuongTon.Text = row.SoLuongTon.ToString();
+            txtDungTich.Text = row.DungTich?.ToString("0") ?? "";
+
+            if (row.HanSuDung.HasValue)
             {
-                txtMaDoUong.Text = row.MaDoUong;
-                txtTenDoUong.Text = row.TenDoUong;
-                txtDonGia.Text = row.DonGia.ToString("0");
-                txtSoLuongTon.Text = row.SoLuongTon.ToString();
-                txtDungTich.Text = row.DungTich?.ToString("0") ?? "";
-                
-                if (row.HanSuDung.HasValue)
-                {
-                    chkHanSuDung.Checked = true;
-                    dtpHanSuDung.Value = row.HanSuDung.Value;
-                }
-                else
-                {
-                    chkHanSuDung.Checked = false;
-                    dtpHanSuDung.Value = DateTime.Now.AddYears(1);
-                }
-                
-                txtGhiChu.Text = row.GhiChu ?? "";
-                _currentMaLoai = row.MaLoai;
-                SetImage(row.HinhPath);
+                chkHanSuDung.Checked = true;
+                dtpHanSuDung.Value = row.HanSuDung.Value;
             }
-            catch { }
+            else
+            {
+                chkHanSuDung.Checked = false;
+                dtpHanSuDung.Value = DateTime.Now.AddYears(1);
+            }
+
+            txtGhiChu.Text = row.GhiChu ?? "";
+            _currentMaLoai = row.MaLoai;
+            SetImage(row.HinhPath);
         }
 
         private void SetMode(UiMode mode)
         {
-            try
-            {
-                _mode = mode;
-                bool canEdit = AppSession.CanEditCatalog;
-                bool canDel = AppSession.CanDeleteDrink;
-                bool isView = mode == UiMode.View;
+            _mode = mode;
+            bool canEdit = AppSession.CanEditCatalog;
+            bool canDel = AppSession.CanDeleteDrink;
+            bool isView = mode == UiMode.View;
 
-                btnThem.Enabled = isView && canEdit;
-                btnSua.Enabled = isView && canEdit;
-                btnXoa.Enabled = isView && canDel;
-                btnLuu.Enabled = !isView;
-                btnHuy.Enabled = !isView;
+            btnThem.Enabled = isView && canEdit;
+            btnSua.Enabled = isView && canEdit;
+            btnXoa.Enabled = isView && canDel;
+            btnLuu.Enabled = !isView;
+            btnHuy.Enabled = !isView;
 
-                txtMaDoUong.ReadOnly = isView || mode == UiMode.Edit;
-                txtTenDoUong.ReadOnly = isView;
-                txtDonGia.ReadOnly = isView;
-                txtSoLuongTon.ReadOnly = isView;
-                txtDungTich.ReadOnly = isView;
-                dtpHanSuDung.Enabled = !isView && chkHanSuDung.Checked;
-                chkHanSuDung.Enabled = !isView;
-                txtGhiChu.ReadOnly = isView;
-                btnChonHinh.Enabled = !isView;
-                btnXoaHinh.Enabled = !isView;
-            }
-            catch { }
+            txtMaDoUong.ReadOnly = isView || mode == UiMode.Edit;
+            txtTenDoUong.ReadOnly = isView;
+            txtDonGia.ReadOnly = isView;
+            txtSoLuongTon.ReadOnly = isView;
+            txtDungTich.ReadOnly = isView;
+            dtpHanSuDung.Enabled = !isView && chkHanSuDung.Checked;
+            chkHanSuDung.Enabled = !isView;
+            txtGhiChu.ReadOnly = isView;
+            btnChonHinh.Enabled = !isView;
+            btnXoaHinh.Enabled = !isView;
         }
 
         private void ClearInputs()
         {
-            try
-            {
-                txtMaDoUong.Clear(); txtTenDoUong.Clear(); txtDonGia.Clear();
-                txtSoLuongTon.Clear(); txtDungTich.Clear(); txtGhiChu.Clear(); 
-                chkHanSuDung.Checked = false;
-                dtpHanSuDung.Value = DateTime.Now.AddYears(1);
-                _currentMaLoai = null; ClearImage();
-            }
-            catch { }
-        }
-
-        private bool ValidateInputs()
-        {
-            if (string.IsNullOrWhiteSpace(txtMaDoUong.Text)) { ShowWarn(Res.EnterCode); return false; }
-            if (string.IsNullOrWhiteSpace(txtTenDoUong.Text)) { ShowWarn(Res.EnterName); return false; }
-            if (!decimal.TryParse(txtDonGia.Text, out var price) || price < 0) { ShowWarn(Res.InvalidPrice); return false; }
-            if (!int.TryParse(txtSoLuongTon.Text, out var qty) || qty < 0) { ShowWarn(Res.InvalidQuantity); return false; }
-            if (!string.IsNullOrWhiteSpace(txtDungTich.Text) && (!decimal.TryParse(txtDungTich.Text, out var dt) || dt <= 0)) 
-            { 
-                ShowWarn("Dung tích không hợp lệ"); 
-                return false; 
-            }
-            return true;
+            txtMaDoUong.Clear();
+            txtTenDoUong.Clear();
+            txtDonGia.Clear();
+            txtSoLuongTon.Clear();
+            txtDungTich.Clear();
+            txtGhiChu.Clear();
+            chkHanSuDung.Checked = false;
+            dtpHanSuDung.Value = DateTime.Now.AddYears(1);
+            _currentMaLoai = null;
+            ClearImage();
         }
 
         private void SetImage(string path)
@@ -290,7 +287,9 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void ClearImage()
         {
-            try { picDoUong.Image?.Dispose(); picDoUong.Image = null; picDoUong.Tag = null; } catch { }
+            picDoUong.Image?.Dispose();
+            picDoUong.Image = null;
+            picDoUong.Tag = null;
         }
 
         private void ShowWarn(string msg) => MessageBox.Show(this, msg, Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);

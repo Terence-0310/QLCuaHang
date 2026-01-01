@@ -16,7 +16,7 @@ namespace QuanLyCuaHangRuou
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
-                // Global exception handlers - dam bao ung dung khong crash
+                // Global exception handlers - đảm bảo ứng dụng không crash
                 Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                 Application.ThreadException += OnThreadException;
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -53,19 +53,19 @@ namespace QuanLyCuaHangRuou
         {
             try
             {
-                var msg = "C\u00F3 l\u1ED7i x\u1EA3y ra. Vui l\u00F2ng th\u1EED l\u1EA1i.";
+                var msg = "Có lỗi xảy ra. Vui lòng thử lại.";
                 if (ex != null)
                 {
                     var inner = ex;
                     while (inner.InnerException != null)
                         inner = inner.InnerException;
-                    msg += "\n\nChi ti\u1EBFt: " + inner.Message;
+                    msg += "\n\nChi tiết: " + inner.Message;
                 }
                 MessageBox.Show(msg, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch
             {
-                // Trong truong hop hiem hoi khong the hien MessageBox
+                // Trong trường hợp hiếm hoi không thể hiện MessageBox
                 try { Console.WriteLine("Fatal error: " + ex?.Message); } catch { }
             }
         }
@@ -74,9 +74,9 @@ namespace QuanLyCuaHangRuou
         {
             try
             {
-                var msg = "L\u1ED7i nghi\u00EAm tr\u1ECDng khi kh\u1EDFi \u0111\u1ED9ng \u1EE9ng d\u1EE5ng!";
+                var msg = "Lỗi nghiêm trọng khi khởi động ứng dụng!";
                 if (ex != null) msg += "\n\n" + ex.Message;
-                MessageBox.Show(msg, "L\u1ED7i h\u1EC7 th\u1ED1ng", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(msg, "Lỗi hệ thống", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
             catch { }
         }

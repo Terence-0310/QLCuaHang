@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using QuanLyCuaHangRuou.BUS;
 using QuanLyCuaHangRuou.DAL;
 using QuanLyCuaHangRuou.Common;
 
@@ -23,7 +24,7 @@ namespace QuanLyCuaHangRuou.GUI
             }
             catch (Exception ex)
             {
-                ShowError("Lỗi khi khởi tạo: " + DbConfig.GetInnerMsg(ex));
+                ShowError("Lỗi khi khởi tạo: " + ex.Message);
             }
         }
 
@@ -34,34 +35,27 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            btnLogin.Enabled = false;
+            Application.DoEvents();
+
             try
             {
                 string user = txtUsername.Text.Trim();
                 string pass = txtPassword.Text;
 
-                if (user.Length == 0) { ShowWarn(Res.EnterUsername); txtUsername.Focus(); return; }
-                if (pass.Length == 0) { ShowWarn(Res.EnterPassword); txtPassword.Focus(); return; }
+                var result = AuthBus.Login(user, pass);
 
-                btnLogin.Enabled = false;
-                Application.DoEvents();
-
-                var result = AuthDal.Login(user, pass);
-
-                if (!result.ok)
+                if (!result.Success)
                 {
-                    ShowWarn(result.error ?? Res.LoginFailed);
+                    ShowWarn(result.Message ?? Res.LoginFailed);
                     txtPassword.Focus();
                     txtPassword.SelectAll();
                     return;
                 }
 
                 LoggedUser = user;
-                LoggedRole = result.role;
+                LoggedRole = result.Data;
                 DialogResult = DialogResult.OK;
-            }
-            catch (Exception ex)
-            {
-                ShowError("Lỗi đăng nhập: " + DbConfig.GetInnerMsg(ex));
             }
             finally
             {

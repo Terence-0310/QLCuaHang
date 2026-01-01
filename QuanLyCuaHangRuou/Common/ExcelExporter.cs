@@ -7,20 +7,20 @@ using System.Windows.Forms;
 namespace QuanLyCuaHangRuou.Common
 {
     /// <summary>
-    /// Helper class de xuat du lieu ra file Excel (CSV format hoac HTML table)
-    /// Khong can thu vien ben ngoai
+    /// Helper class để xuất dữ liệu ra file Excel (CSV format hoặc HTML table)
+    /// Không cần thư viện bên ngoài
     /// </summary>
     public static class ExcelExporter
     {
         /// <summary>
-        /// Xuat hoa don ban hang
+        /// Xuất hóa đơn bán hàng
         /// </summary>
         public static bool ExportHoaDon(string maHD, DateTime ngayHD, string tenKhachHang, 
             string tenNhanVien, DataGridView dgvGioHang, decimal tongTien, bool showSaveDialog = true)
         {
             if (dgvGioHang == null || dgvGioHang.Rows.Count == 0)
             {
-                MessageBox.Show("Kh\u00F4ng c\u00F3 s\u1EA3n ph\u1EA9m trong gi\u1ECF h\u00E0ng!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Không có sản phẩm trong giỏ hàng!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -32,7 +32,7 @@ namespace QuanLyCuaHangRuou.Common
                 {
                     sfd.Filter = "Excel Files (*.xls)|*.xls|PDF Files (*.html)|*.html";
                     sfd.FileName = "HoaDon_" + maHD;
-                    sfd.Title = "Xu\u1EA5t h\u00F3a \u0111\u01A1n";
+                    sfd.Title = "Xuất hóa đơn";
 
                     if (sfd.ShowDialog() != DialogResult.OK)
                         return false;
@@ -42,7 +42,7 @@ namespace QuanLyCuaHangRuou.Common
             }
             else
             {
-                // Luu vao thu muc HoaDon
+                // Lưu vào thư mục HoaDon
                 string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HoaDon");
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
@@ -57,7 +57,7 @@ namespace QuanLyCuaHangRuou.Common
                 sb.AppendLine("<html>");
                 sb.AppendLine("<head>");
                 sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
-                sb.AppendLine("<title>H\u00F3a \u0111\u01A1n " + maHD + "</title>");
+                sb.AppendLine("<title>Hóa đơn " + maHD + "</title>");
                 sb.AppendLine("<style>");
                 sb.AppendLine("@media print { body { margin: 0; } }");
                 sb.AppendLine("body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }");
@@ -65,8 +65,6 @@ namespace QuanLyCuaHangRuou.Common
                 sb.AppendLine(".shop-name { font-size: 24px; font-weight: bold; color: #8B0000; margin-bottom: 5px; }");
                 sb.AppendLine(".shop-info { font-size: 12px; color: #666; }");
                 sb.AppendLine(".invoice-title { font-size: 28px; font-weight: bold; text-align: center; margin: 20px 0; color: #333; }");
-                sb.AppendLine(".invoice-info { display: flex; justify-content: space-between; margin-bottom: 20px; }");
-                sb.AppendLine(".invoice-info-left, .invoice-info-right { width: 48%; }");
                 sb.AppendLine(".info-row { margin-bottom: 8px; }");
                 sb.AppendLine(".info-label { font-weight: bold; display: inline-block; width: 120px; }");
                 sb.AppendLine("table { width: 100%; border-collapse: collapse; margin: 20px 0; }");
@@ -78,7 +76,6 @@ namespace QuanLyCuaHangRuou.Common
                 sb.AppendLine(".total-section { margin-top: 20px; text-align: right; }");
                 sb.AppendLine(".total-row { font-size: 14px; margin-bottom: 5px; }");
                 sb.AppendLine(".grand-total { font-size: 22px; font-weight: bold; color: #8B0000; border-top: 2px solid #333; padding-top: 10px; margin-top: 10px; }");
-                sb.AppendLine(".footer { margin-top: 40px; text-align: center; }");
                 sb.AppendLine(".signature-section { display: flex; justify-content: space-between; margin-top: 50px; }");
                 sb.AppendLine(".signature-box { width: 45%; text-align: center; }");
                 sb.AppendLine(".signature-title { font-weight: bold; margin-bottom: 60px; }");
@@ -91,38 +88,38 @@ namespace QuanLyCuaHangRuou.Common
                 sb.AppendLine("</head>");
                 sb.AppendLine("<body>");
                 
-                // Header - Ten cua hang
+                // Header - Tên cửa hàng
                 sb.AppendLine("<div class=\"header\">");
-                sb.AppendLine("<div class=\"shop-name\">C\u1EECA H\u00C0NG R\u01AF\u1EE2U CAO C\u1EA4P</div>");
-                sb.AppendLine("<div class=\"shop-info\">\u0110\u1ECBa ch\u1EC9: 123 Nguy\u1EC5n V\u0103n Linh, Qu\u1EADn 7, TP.HCM</div>");
-                sb.AppendLine("<div class=\"shop-info\">\u0110i\u1EC7n tho\u1EA1i: 0123 456 789 | Email: contact@cuahangr.vn</div>");
+                sb.AppendLine("<div class=\"shop-name\">CỬA HÀNG RƯỢU CAO CẤP</div>");
+                sb.AppendLine("<div class=\"shop-info\">Địa chỉ: 123 Nguyễn Văn Linh, Quận 7, TP.HCM</div>");
+                sb.AppendLine("<div class=\"shop-info\">Điện thoại: 0123 456 789 | Email: contact@cuahangr.vn</div>");
                 sb.AppendLine("</div>");
                 
-                // Tieu de hoa don
-                sb.AppendLine("<div class=\"invoice-title\">H\u00D3A \u0110\u01A0N B\u00C1N H\u00C0NG</div>");
+                // Tiêu đề hóa đơn
+                sb.AppendLine("<div class=\"invoice-title\">HÓA ĐƠN BÁN HÀNG</div>");
                 
-                // Thong tin hoa don
+                // Thông tin hóa đơn
                 sb.AppendLine("<table style=\"border: none; margin-bottom: 20px;\">");
                 sb.AppendLine("<tr style=\"border: none;\">");
                 sb.AppendLine("<td style=\"border: none; width: 50%; vertical-align: top;\">");
-                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">S\u1ED1 h\u00F3a \u0111\u01A1n:</span> <strong>" + HtmlEncode(maHD) + "</strong></div>");
-                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Ng\u00E0y l\u1EADp:</span> " + ngayHD.ToString("dd/MM/yyyy HH:mm") + "</div>");
+                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Số hóa đơn:</span> <strong>" + HtmlEncode(maHD) + "</strong></div>");
+                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Ngày lập:</span> " + ngayHD.ToString("dd/MM/yyyy HH:mm") + "</div>");
                 sb.AppendLine("</td>");
                 sb.AppendLine("<td style=\"border: none; width: 50%; vertical-align: top;\">");
-                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Kh\u00E1ch h\u00E0ng:</span> " + HtmlEncode(tenKhachHang ?? "Kh\u00E1ch l\u1EBB") + "</div>");
-                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Nh\u00E2n vi\u00EAn:</span> " + HtmlEncode(tenNhanVien ?? "") + "</div>");
+                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Khách hàng:</span> " + HtmlEncode(tenKhachHang ?? "Khách lẻ") + "</div>");
+                sb.AppendLine("<div class=\"info-row\"><span class=\"info-label\">Nhân viên:</span> " + HtmlEncode(tenNhanVien ?? "") + "</div>");
                 sb.AppendLine("</td>");
                 sb.AppendLine("</tr>");
                 sb.AppendLine("</table>");
                 
-                // Bang chi tiet san pham
+                // Bảng chi tiết sản phẩm
                 sb.AppendLine("<table>");
                 sb.AppendLine("<tr>");
                 sb.AppendLine("<th style=\"width: 50px;\">STT</th>");
-                sb.AppendLine("<th>T\u00EAn s\u1EA3n ph\u1EA9m</th>");
-                sb.AppendLine("<th style=\"width: 120px;\">\u0110\u01A1n gi\u00E1</th>");
+                sb.AppendLine("<th>Tên sản phẩm</th>");
+                sb.AppendLine("<th style=\"width: 120px;\">Đơn giá</th>");
                 sb.AppendLine("<th style=\"width: 80px;\">SL</th>");
-                sb.AppendLine("<th style=\"width: 140px;\">Th\u00E0nh ti\u1EC1n</th>");
+                sb.AppendLine("<th style=\"width: 140px;\">Thành tiền</th>");
                 sb.AppendLine("</tr>");
 
                 int stt = 0;
@@ -140,41 +137,41 @@ namespace QuanLyCuaHangRuou.Common
                     sb.AppendLine("<td class=\"text-center\">" + stt + "</td>");
                     sb.AppendLine("<td>" + HtmlEncode(tenSP) + "</td>");
                     sb.AppendLine("<td class=\"text-right\">" + donGia.ToString("N0") + "</td>");
-                    sb.AppendLine("<td class=\"text-center\">" + soLuong.ToString("N0") + "</td>");
+                    sb.AppendLine("<td class=\"text-center\"" + soLuong.ToString("N0") + "</td>");
                     sb.AppendLine("<td class=\"text-right\">" + thanhTien.ToString("N0") + "</td>");
                     sb.AppendLine("</tr>");
                 }
                 
                 sb.AppendLine("</table>");
                 
-                // Tong tien
+                // Tổng tiền
                 sb.AppendLine("<div class=\"total-section\">");
-                sb.AppendLine("<div class=\"total-row\">T\u1EA1m t\u00EDnh: " + tongTien.ToString("N0") + " VN\u0110</div>");
-                sb.AppendLine("<div class=\"total-row\">Thu\u1EBF VAT (0%): 0 VN\u0110</div>");
-                sb.AppendLine("<div class=\"grand-total\">T\u1ED4NG C\u1ED8NG: " + tongTien.ToString("N0") + " VN\u0110</div>");
+                sb.AppendLine("<div class=\"total-row\">Tạm tính: " + tongTien.ToString("N0") + " VNĐ</div>");
+                sb.AppendLine("<div class=\"total-row\">Thuế VAT (0%): 0 VNĐ</div>");
+                sb.AppendLine("<div class=\"grand-total\">TỔNG CỘNG: " + tongTien.ToString("N0") + " VNĐ</div>");
                 sb.AppendLine("</div>");
                 
-                // Chu ky
+                // Chữ ký
                 sb.AppendLine("<div class=\"signature-section\">");
                 sb.AppendLine("<div class=\"signature-box\">");
-                sb.AppendLine("<div class=\"signature-title\">Kh\u00E1ch h\u00E0ng</div>");
-                sb.AppendLine("<div class=\"signature-line\">(K\u00FD, ghi r\u00F5 h\u1ECD t\u00EAn)</div>");
+                sb.AppendLine("<div class=\"signature-title\">Khách hàng</div>");
+                sb.AppendLine("<div class=\"signature-line\">(Ký, ghi rõ họ tên)</div>");
                 sb.AppendLine("</div>");
                 sb.AppendLine("<div class=\"signature-box\">");
-                sb.AppendLine("<div class=\"signature-title\">Ng\u01B0\u1EDDi b\u00E1n h\u00E0ng</div>");
-                sb.AppendLine("<div class=\"signature-line\">(K\u00FD, ghi r\u00F5 h\u1ECD t\u00EAn)</div>");
+                sb.AppendLine("<div class=\"signature-title\">Người bán hàng</div>");
+                sb.AppendLine("<div class=\"signature-line\">(Ký, ghi rõ họ tên)</div>");
                 sb.AppendLine("</div>");
                 sb.AppendLine("</div>");
                 
-                // Loi cam on
+                // Lời cảm ơn
                 sb.AppendLine("<div class=\"thank-you\">");
-                sb.AppendLine("<p>C\u1EA3m \u01A1n Qu\u00FD kh\u00E1ch \u0111\u00E3 mua h\u00E0ng!</p>");
-                sb.AppendLine("<p>H\u1EB9n g\u1EB7p l\u1EA1i Qu\u00FD kh\u00E1ch!</p>");
+                sb.AppendLine("<p>Cảm ơn Quý khách đã mua hàng!</p>");
+                sb.AppendLine("<p>Hẹn gặp lại Quý khách!</p>");
                 sb.AppendLine("</div>");
                 
-                // Nut in (chi hien thi khi mo file)
+                // Nút in (chỉ hiển thị khi mở file)
                 sb.AppendLine("<div class=\"no-print\" style=\"text-align: center;\">");
-                sb.AppendLine("<button class=\"print-btn\" onclick=\"window.print()\">IN H\u00D3A \u0110\u01A0N</button>");
+                sb.AppendLine("<button class=\"print-btn\" onclick=\"window.print()\">IN HÓA ĐƠN</button>");
                 sb.AppendLine("</div>");
                 
                 sb.AppendLine("</body>");
@@ -184,28 +181,28 @@ namespace QuanLyCuaHangRuou.Common
                 
                 if (showSaveDialog)
                 {
-                    MessageBox.Show("Xu\u1EA5t h\u00F3a \u0111\u01A1n th\u00E0nh c\u00F4ng!\n" + filePath, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Xuất hóa đơn thành công!\n" + filePath, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 
-                // Mo file sau khi xuat
+                // Mở file sau khi xuất
                 System.Diagnostics.Process.Start(filePath);
                 return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("L\u1ED7i khi xu\u1EA5t h\u00F3a \u0111\u01A1n: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi khi xuất hóa đơn: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
 
         /// <summary>
-        /// Xuat DataGridView ra file Excel (CSV format)
+        /// Xuất DataGridView ra file Excel (CSV format)
         /// </summary>
         public static bool ExportToExcel(DataGridView dgv, string title, string fileName = null)
         {
             if (dgv == null || dgv.Rows.Count == 0)
             {
-                MessageBox.Show("Kh\u00F4ng c\u00F3 d\u1EEF li\u1EC7u \u0111\u1EC3 xu\u1EA5t!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Không có dữ liệu để xuất!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -213,7 +210,7 @@ namespace QuanLyCuaHangRuou.Common
             {
                 sfd.Filter = "Excel Files (*.xls)|*.xls|CSV Files (*.csv)|*.csv";
                 sfd.FileName = fileName ?? title + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                sfd.Title = "Xu\u1EA5t b\u00E1o c\u00E1o";
+                sfd.Title = "Xuất báo cáo";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                     return false;
@@ -231,30 +228,30 @@ namespace QuanLyCuaHangRuou.Common
                         ExportToHtmlExcel(dgv, sfd.FileName, title);
                     }
 
-                    MessageBox.Show("Xu\u1EA5t file th\u00E0nh c\u00F4ng!\n" + sfd.FileName, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Xuất file thành công!\n" + sfd.FileName, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     
-                    // Mo file sau khi xuat
+                    // Mở file sau khi xuất
                     System.Diagnostics.Process.Start(sfd.FileName);
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("L\u1ED7i khi xu\u1EA5t file: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Lỗi khi xuất file: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
         }
 
         /// <summary>
-        /// Xuat ra file CSV
+        /// Xuất ra file CSV
         /// </summary>
         private static void ExportToCsv(DataGridView dgv, string filePath, string title)
         {
             var sb = new StringBuilder();
             
-            // Tieu de
+            // Tiêu đề
             sb.AppendLine(title);
-            sb.AppendLine("Ng\u00E0y xu\u1EA5t: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
+            sb.AppendLine("Ngày xuất: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"));
             sb.AppendLine();
 
             // Header
@@ -284,7 +281,7 @@ namespace QuanLyCuaHangRuou.Common
         }
 
         /// <summary>
-        /// Xuat ra file Excel dang HTML table (Excel co the mo duoc)
+        /// Xuất ra file Excel dạng HTML table (Excel có thể mở được)
         /// </summary>
         private static void ExportToHtmlExcel(DataGridView dgv, string filePath, string title)
         {
@@ -307,9 +304,9 @@ namespace QuanLyCuaHangRuou.Common
             sb.AppendLine("</head>");
             sb.AppendLine("<body>");
             
-            // Tieu de
+            // Tiêu đề
             sb.AppendLine("<p class=\"title\">" + HtmlEncode(title) + "</p>");
-            sb.AppendLine("<p class=\"date\">Ng\u00E0y xu\u1EA5t: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "</p>");
+            sb.AppendLine("<p class=\"date\">Ngày xuất: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "</p>");
             
             // Table
             sb.AppendLine("<table>");
@@ -335,7 +332,7 @@ namespace QuanLyCuaHangRuou.Common
                     string cellValue = value?.ToString() ?? "";
                     string cssClass = "";
                     
-                    // Format so
+                    // Format số
                     if (value is decimal || value is double || value is int || value is long)
                     {
                         cssClass = " class=\"number\"";
@@ -360,13 +357,13 @@ namespace QuanLyCuaHangRuou.Common
         }
 
         /// <summary>
-        /// Xuat bao cao doanh thu voi tong hop
+        /// Xuất báo cáo doanh thu với tổng hợp
         /// </summary>
         public static bool ExportDoanhThuReport(DataGridView dgv, DateTime tuNgay, DateTime denNgay, decimal tongDoanhThu)
         {
             if (dgv == null || dgv.Rows.Count == 0)
             {
-                MessageBox.Show("Kh\u00F4ng c\u00F3 d\u1EEF li\u1EC7u \u0111\u1EC3 xu\u1EA5t!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Không có dữ liệu để xuất!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -374,7 +371,7 @@ namespace QuanLyCuaHangRuou.Common
             {
                 sfd.Filter = "Excel Files (*.xls)|*.xls";
                 sfd.FileName = "BaoCaoDoanhThu_" + tuNgay.ToString("yyyyMMdd") + "_" + denNgay.ToString("yyyyMMdd");
-                sfd.Title = "Xu\u1EA5t b\u00E1o c\u00E1o doanh thu";
+                sfd.Title = "Xuất báo cáo doanh thu";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                     return false;
@@ -403,10 +400,10 @@ namespace QuanLyCuaHangRuou.Common
                     sb.AppendLine("</head>");
                     sb.AppendLine("<body>");
                     
-                    // Tieu de
-                    sb.AppendLine("<p class=\"title\">B\u00C1O C\u00C1O DOANH THU</p>");
-                    sb.AppendLine("<p class=\"subtitle\">T\u1EEB ng\u00E0y: " + tuNgay.ToString("dd/MM/yyyy") + " - \u0110\u1EBFn ng\u00E0y: " + denNgay.ToString("dd/MM/yyyy") + "</p>");
-                    sb.AppendLine("<p class=\"date\">Ng\u00E0y xu\u1EA5t: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "</p>");
+                    // Tiêu đề
+                    sb.AppendLine("<p class=\"title\">BÁO CÁO DOANH THU</p>");
+                    sb.AppendLine("<p class=\"subtitle\">Từ ngày: " + tuNgay.ToString("dd/MM/yyyy") + " - Đến ngày: " + denNgay.ToString("dd/MM/yyyy") + "</p>");
+                    sb.AppendLine("<p class=\"date\">Ngày xuất: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "</p>");
                     
                     // Table
                     sb.AppendLine("<table>");
@@ -418,10 +415,10 @@ namespace QuanLyCuaHangRuou.Common
                     {
                         if (!dgv.Columns[i].Visible) continue;
                         string header = dgv.Columns[i].HeaderText;
-                        // Doi ten cot cho dep hon
-                        if (dgv.Columns[i].Name == "Ngay") header = "Ng\u00E0y";
-                        else if (dgv.Columns[i].Name == "SoHoaDon") header = "S\u1ED1 h\u00F3a \u0111\u01A1n";
-                        else if (dgv.Columns[i].Name == "TongTien") header = "T\u1ED5ng ti\u1EC1n (VN\u0110)";
+                        // Đổi tên cột cho đẹp hơn
+                        if (dgv.Columns[i].Name == "Ngay") header = "Ngày";
+                        else if (dgv.Columns[i].Name == "SoHoaDon") header = "Số hóa đơn";
+                        else if (dgv.Columns[i].Name == "TongTien") header = "Tổng tiền (VNĐ)";
                         sb.AppendLine("<th>" + header + "</th>");
                     }
                     sb.AppendLine("</tr>");
@@ -461,14 +458,14 @@ namespace QuanLyCuaHangRuou.Common
                         sb.AppendLine("</tr>");
                     }
                     
-                    // Tong cong
+                    // Tổng cộng
                     int colCount = 1; // STT
                     foreach (DataGridViewColumn col in dgv.Columns)
                         if (col.Visible) colCount++;
                     
                     sb.AppendLine("<tr class=\"total-row\">");
-                    sb.AppendLine("<td colspan=\"" + (colCount - 1) + "\" class=\"total-label\">T\u1ED4NG C\u1ED8NG:</td>");
-                    sb.AppendLine("<td class=\"total-value\">" + tongDoanhThu.ToString("N0") + " VN\u0110</td>");
+                    sb.AppendLine("<td colspan=\"" + (colCount - 1) + "\" class=\"total-label\">TỔNG CỘNG:</td>");
+                    sb.AppendLine("<td class=\"total-value\">" + tongDoanhThu.ToString("N0") + " VNĐ</td>");
                     sb.AppendLine("</tr>");
                     
                     sb.AppendLine("</table>");
@@ -479,8 +476,8 @@ namespace QuanLyCuaHangRuou.Common
                     sb.AppendLine("<tr style=\"border: none;\">");
                     sb.AppendLine("<td style=\"border: none; width: 50%;\"></td>");
                     sb.AppendLine("<td style=\"border: none; text-align: center;\">");
-                    sb.AppendLine("<p><i>Ng\u00E0y " + DateTime.Now.Day + " th\u00E1ng " + DateTime.Now.Month + " n\u0103m " + DateTime.Now.Year + "</i></p>");
-                    sb.AppendLine("<p><b>Ng\u01B0\u1EDDi l\u1EADp b\u00E1o c\u00E1o</b></p>");
+                    sb.AppendLine("<p><i>Ngày " + DateTime.Now.Day + " tháng " + DateTime.Now.Month + " năm " + DateTime.Now.Year + "</i></p>");
+                    sb.AppendLine("<p><b>Người lập báo cáo</b></p>");
                     sb.AppendLine("<br/><br/><br/>");
                     sb.AppendLine("<p>____________________</p>");
                     sb.AppendLine("</td>");
@@ -492,28 +489,28 @@ namespace QuanLyCuaHangRuou.Common
 
                     File.WriteAllText(sfd.FileName, sb.ToString(), Encoding.UTF8);
                     
-                    MessageBox.Show("Xu\u1EA5t file th\u00E0nh c\u00F4ng!\n" + sfd.FileName, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Xuất file thành công!\n" + sfd.FileName, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     
-                    // Mo file sau khi xuat
+                    // Mở file sau khi xuất
                     System.Diagnostics.Process.Start(sfd.FileName);
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("L\u1ED7i khi xu\u1EA5t file: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Lỗi khi xuất file: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
         }
 
         /// <summary>
-        /// Xuat bao cao ton kho
+        /// Xuất báo cáo tồn kho
         /// </summary>
         public static bool ExportTonKhoReport(DataGridView dgv, decimal tongSoLuong)
         {
             if (dgv == null || dgv.Rows.Count == 0)
             {
-                MessageBox.Show("Kh\u00F4ng c\u00F3 d\u1EEF li\u1EC7u \u0111\u1EC3 xu\u1EA5t!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Không có dữ liệu để xuất!", Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -521,7 +518,7 @@ namespace QuanLyCuaHangRuou.Common
             {
                 sfd.Filter = "Excel Files (*.xls)|*.xls";
                 sfd.FileName = "BaoCaoTonKho_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                sfd.Title = "Xu\u1EA5t b\u00E1o c\u00E1o t\u1ED3n kho";
+                sfd.Title = "Xuất báo cáo tồn kho";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                     return false;
@@ -548,8 +545,8 @@ namespace QuanLyCuaHangRuou.Common
                     sb.AppendLine("</head>");
                     sb.AppendLine("<body>");
                     
-                    sb.AppendLine("<p class=\"title\">B\u00C1O C\u00C1O T\u1ED2N KHO</p>");
-                    sb.AppendLine("<p class=\"date\">Ng\u00E0y xu\u1EA5t: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "</p>");
+                    sb.AppendLine("<p class=\"title\">BÁO CÁO TỒN KHO</p>");
+                    sb.AppendLine("<p class=\"date\">Ngày xuất: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + "</p>");
                     
                     sb.AppendLine("<table>");
                     
@@ -594,14 +591,14 @@ namespace QuanLyCuaHangRuou.Common
                         sb.AppendLine("</tr>");
                     }
                     
-                    // Tong cong
+                    // Tổng cộng
                     int colCount = 1;
                     foreach (DataGridViewColumn col in dgv.Columns)
                         if (col.Visible) colCount++;
                     
                     sb.AppendLine("<tr class=\"total-row\">");
-                    sb.AppendLine("<td colspan=\"" + (colCount - 1) + "\" class=\"total-label\">T\u1ED4NG C\u1ED8NG:</td>");
-                    sb.AppendLine("<td class=\"total-value\">" + tongSoLuong.ToString("N0") + " s\u1EA3n ph\u1EA9m</td>");
+                    sb.AppendLine("<td colspan=\"" + (colCount - 1) + "\" class=\"total-label\">TỔNG CỘNG:</td>");
+                    sb.AppendLine("<td class=\"total-value\">" + tongSoLuong.ToString("N0") + " sản phẩm</td>");
                     sb.AppendLine("</tr>");
                     
                     sb.AppendLine("</table>");
@@ -610,13 +607,13 @@ namespace QuanLyCuaHangRuou.Common
 
                     File.WriteAllText(sfd.FileName, sb.ToString(), Encoding.UTF8);
                     
-                    MessageBox.Show("Xu\u1EA5t file th\u00E0nh c\u00F4ng!\n" + sfd.FileName, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Xuất file thành công!\n" + sfd.FileName, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     System.Diagnostics.Process.Start(sfd.FileName);
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("L\u1ED7i khi xu\u1EA5t file: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Lỗi khi xuất file: " + ex.Message, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }

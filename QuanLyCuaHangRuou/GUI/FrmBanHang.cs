@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using QuanLyCuaHangRuou.BUS;
 using QuanLyCuaHangRuou.DAL;
 using QuanLyCuaHangRuou.Common;
 
@@ -8,6 +9,8 @@ namespace QuanLyCuaHangRuou.GUI
 {
     public partial class FrmBanHang : Form
     {
+        private List<BanHangDal.GioHangItem> _cartItems = new List<BanHangDal.GioHangItem>();
+
         public FrmBanHang() { InitializeComponent(); }
 
         private void FrmBanHang_Load(object sender, EventArgs e)
@@ -17,27 +20,45 @@ namespace QuanLyCuaHangRuou.GUI
                 WinFormsExtensions.SetDoubleBuffered(dgvGioHang);
                 WinFormsExtensions.AttachDataErrorHandler(dgvGioHang);
 
-                cboKhachHang.DisplayMember = "TenKH";
-                cboKhachHang.ValueMember = "MaKH";
-                cboKhachHang.DataSource = KhachHangDal.GetAllForGrid();
-
-                cboDoUong.DisplayMember = "TenDoUong";
-                cboDoUong.ValueMember = "MaDoUong";
-                cboDoUong.DataSource = DoUongDal.GetAllForGrid();
+                LoadKhachHang();
+                LoadDoUong();
 
                 dgvGioHang.AutoGenerateColumns = false;
                 ResetHoaDon();
                 lblNhanVien.Text = AppSession.CurrentUser ?? "NV";
             }
-            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi khởi tạo: " + ex.Message); }
+        }
+
+        private void LoadKhachHang()
+        {
+            var result = KhachHangBus.GetAll();
+            if (result.Success)
+            {
+                cboKhachHang.DisplayMember = "TenKH";
+                cboKhachHang.ValueMember = "MaKH";
+                cboKhachHang.DataSource = result.Data;
+            }
+        }
+
+        private void LoadDoUong()
+        {
+            var result = DoUongBus.GetAll();
+            if (result.Success)
+            {
+                cboDoUong.DisplayMember = "TenDoUong";
+                cboDoUong.ValueMember = "MaDoUong";
+                cboDoUong.DataSource = result.Data;
+            }
         }
 
         private void ResetHoaDon()
         {
-            txtMaHD.Text = "HD" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            txtMaHD.Text = BanHangBus.GenerateMaHD();
             dtpNgay.Value = DateTime.Now;
             nudSoLuong.Value = 1;
             dgvGioHang.Rows.Clear();
+            _cartItems.Clear();
             UpdateTotal();
         }
 
@@ -49,70 +70,84 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void btnThemVaoGio_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (!(cboDoUong.SelectedItem is DoUongDal.DoUongGridRow du)) return;
-                int sl = (int)nudSoLuong.Value;
-                if (sl <= 0) { ShowWarn(Res.QtyMustBePositive); return; }
+            if (!(cboDoUong.SelectedItem is DoUongDal.DoUongGridRow du)) return;
+            int sl = (int)nudSoLuong.Value;
 
-                var duDb = DoUongDal.GetById(du.MaDoUong);
-                if (duDb != null && duDb.SoLuongTon < sl)
+            // Gọi BUS để validate
+            var result = BanHangBus.AddToCart(du.MaDoUong, sl, _cartItems);
+            if (!result.Success)
+            {
+                ShowWarn(result.Message);
+                return;
+            }
+
+            // Kiểm tra sản phẩm đã có trong giỏ chưa
+            foreach (DataGridViewRow r in dgvGioHang.Rows)
+            {
+                if (r.Cells[0].Value?.ToString() == du.MaDoUong)
                 {
-                    ShowWarn($"Tồn kho không đủ. Còn: {duDb.SoLuongTon}");
+                    int oldQty = Convert.ToInt32(r.Cells[3].Value);
+                    int newQty = oldQty + sl;
+                    r.Cells[3].Value = newQty;
+                    r.Cells[4].Value = du.DonGia * newQty;
+
+                    // Cập nhật _cartItems
+                    var item = _cartItems.Find(x => x.MaDoUong == du.MaDoUong);
+                    if (item != null) item.SoLuong = newQty;
+
+                    UpdateTotal();
                     return;
                 }
-
-                foreach (DataGridViewRow r in dgvGioHang.Rows)
-                {
-                    if (r.Cells[0].Value?.ToString() == du.MaDoUong)
-                    {
-                        int oldQty = Convert.ToInt32(r.Cells[3].Value);
-                        r.Cells[3].Value = oldQty + sl;
-                        r.Cells[4].Value = du.DonGia * (oldQty + sl);
-                        UpdateTotal();
-                        return;
-                    }
-                }
-                dgvGioHang.Rows.Add(du.MaDoUong, du.TenDoUong, du.DonGia, sl, du.DonGia * sl);
-                UpdateTotal();
             }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
+
+            // Thêm mới vào giỏ
+            dgvGioHang.Rows.Add(du.MaDoUong, du.TenDoUong, du.DonGia, sl, du.DonGia * sl);
+            _cartItems.Add(new BanHangDal.GioHangItem
+            {
+                MaDoUong = du.MaDoUong,
+                DonGia = du.DonGia,
+                SoLuong = sl
+            });
+            UpdateTotal();
         }
 
         private void btnThanhToan_Click(object sender, EventArgs e)
         {
+            if (dgvGioHang.Rows.Count == 0) { ShowWarn(Res.CartEmpty); return; }
+            if (Confirm(Res.ConfirmPayment) != DialogResult.Yes) return;
+
+            btnThanhToan.Enabled = false;
+            Application.DoEvents();
+
             try
             {
-                if (dgvGioHang.Rows.Count == 0) { ShowWarn(Res.CartEmpty); return; }
-                if (Confirm(Res.ConfirmPayment) != DialogResult.Yes) return;
+                // Lấy mã NV từ session
+                string maNv = AppSession.CurrentMaNV;
 
-                btnThanhToan.Enabled = false;
-                Application.DoEvents();
+                var result = BanHangBus.ThanhToan(
+                    txtMaHD.Text.Trim(),
+                    dtpNgay.Value,
+                    cboKhachHang.SelectedValue?.ToString(),
+                    maNv,
+                    null,
+                    _cartItems
+                );
 
-                var items = new List<BanHangDal.GioHangItem>();
-                foreach (DataGridViewRow r in dgvGioHang.Rows)
-                    if (r.Cells[0].Value != null)
-                        items.Add(new BanHangDal.GioHangItem
-                        {
-                            MaDoUong = r.Cells[0].Value.ToString(),
-                            DonGia = Convert.ToDecimal(r.Cells[2].Value),
-                            SoLuong = Convert.ToInt32(r.Cells[3].Value)
-                        });
+                if (result.Success)
+                {
+                    ShowInfo(result.Message ?? Res.PaymentSuccess);
 
-                string maNv = null;
-                try { maNv = NhanVienDal.GetByUsername(AppSession.CurrentUser)?.MaNV; } catch { }
+                    if (Confirm("Bạn có muốn xuất hóa đơn?") == DialogResult.Yes)
+                        ExportInvoice();
 
-                BanHangDal.ThanhToan(txtMaHD.Text.Trim(), dtpNgay.Value, cboKhachHang.SelectedValue?.ToString(), maNv, null, items);
-
-                ShowInfo(Res.PaymentSuccess);
-
-                if (Confirm("Bạn có muốn xuất hóa đơn?") == DialogResult.Yes)
-                    ExportInvoice();
-
-                try { cboDoUong.DataSource = DoUongDal.GetAllForGrid(); } catch { }
-                ResetHoaDon();
+                    LoadDoUong();
+                    ResetHoaDon();
+                }
+                else
+                {
+                    ShowError(result.Message);
+                }
             }
-            catch (Exception ex) { ShowError(DbConfig.GetInnerMsg(ex)); }
             finally { btnThanhToan.Enabled = true; }
         }
 
@@ -120,6 +155,8 @@ namespace QuanLyCuaHangRuou.GUI
         {
             if (dgvGioHang.CurrentRow != null)
             {
+                var maDoUong = dgvGioHang.CurrentRow.Cells[0].Value?.ToString();
+                _cartItems.RemoveAll(x => x.MaDoUong == maDoUong);
                 dgvGioHang.Rows.Remove(dgvGioHang.CurrentRow);
                 UpdateTotal();
             }
@@ -128,6 +165,7 @@ namespace QuanLyCuaHangRuou.GUI
         private void btnXoaHet_Click(object sender, EventArgs e)
         {
             dgvGioHang.Rows.Clear();
+            _cartItems.Clear();
             UpdateTotal();
         }
 
@@ -140,18 +178,13 @@ namespace QuanLyCuaHangRuou.GUI
         // === HELPERS ===
         private void UpdateTotal()
         {
-            decimal sum = 0;
-            foreach (DataGridViewRow r in dgvGioHang.Rows)
-                if (r.Cells[4].Value != null) sum += Convert.ToDecimal(r.Cells[4].Value);
+            decimal sum = BanHangBus.CalculateTotal(_cartItems);
             lblTongTienValue.Text = Res.TotalAmount(sum);
         }
 
         private decimal GetTotal()
         {
-            decimal sum = 0;
-            foreach (DataGridViewRow r in dgvGioHang.Rows)
-                if (r.Cells[4].Value != null) sum += Convert.ToDecimal(r.Cells[4].Value);
-            return sum;
+            return BanHangBus.CalculateTotal(_cartItems);
         }
 
         private void ExportInvoice()
@@ -162,7 +195,7 @@ namespace QuanLyCuaHangRuou.GUI
                 if (cboKhachHang.SelectedItem is KhachHangDal.KhachHangGridRow kh) tenKH = kh.TenKH;
                 ExcelExporter.ExportHoaDon(txtMaHD.Text.Trim(), dtpNgay.Value, tenKH, AppSession.CurrentUser ?? "", dgvGioHang, GetTotal(), true);
             }
-            catch (Exception ex) { ShowError("Lỗi xuất hóa đơn: " + DbConfig.GetInnerMsg(ex)); }
+            catch (Exception ex) { ShowError("Lỗi xuất hóa đơn: " + ex.Message); }
         }
 
         private void ShowWarn(string msg) => MessageBox.Show(this, msg, Res.Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);

@@ -4,6 +4,7 @@ using System.Drawing.Printing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using QuanLyCuaHangRuou.BUS;
 using QuanLyCuaHangRuou.Common;
 using QuanLyCuaHangRuou.DAL;
 
@@ -26,30 +27,26 @@ namespace QuanLyCuaHangRuou.GUI
 
         private void FrmXemHoaDon_Load(object sender, EventArgs e)
         {
-            try
+            // Set font for Vietnamese support
+            txtPreview.Font = new Font("Segoe UI", 10F);
+            
+            if (string.IsNullOrWhiteSpace(_maHD))
             {
-                if (string.IsNullOrWhiteSpace(_maHD))
-                {
-                    ShowError("Kh\u00F4ng c\u00F3 m\u00E3 h\u00F3a \u0111\u01A1n!");
-                    Close();
-                    return;
-                }
-
-                _hoaDon = HoaDonDal.GetForPrint(_maHD);
-                if (_hoaDon == null)
-                {
-                    ShowError("Kh\u00F4ng t\u00ECm th\u1EA5y h\u00F3a \u0111\u01A1n!");
-                    Close();
-                    return;
-                }
-
-                DisplayInvoice();
-            }
-            catch (Exception ex)
-            {
-                ShowError("L\u1ED7i t\u1EA3i h\u00F3a \u0111\u01A1n: " + DbConfig.GetInnerMsg(ex));
+                ShowError("Kh\u00F4ng c\u00F3 m\u00E3 h\u00F3a \u0111\u01A1n!");
                 Close();
+                return;
             }
+
+            var result = HoaDonBus.GetForPrint(_maHD);
+            if (!result.Success || result.Data == null)
+            {
+                ShowError(result.Message ?? "Kh\u00F4ng t\u00ECm th\u1EA5y h\u00F3a \u0111\u01A1n!");
+                Close();
+                return;
+            }
+
+            _hoaDon = result.Data;
+            DisplayInvoice();
         }
 
         private void DisplayInvoice()
@@ -60,14 +57,14 @@ namespace QuanLyCuaHangRuou.GUI
             sb.AppendLine("                      C\u1EECA H\u00C0NG R\u01AF\u1EE2U CAO C\u1EA4P");
             sb.AppendLine("================================================================================");
             sb.AppendLine();
-            sb.AppendLine($"  M\u00E3 H\u0110:        {_hoaDon.MaHD}");
-            sb.AppendLine($"  Ng\u00E0y:         {_hoaDon.NgayHoaDon:dd/MM/yyyy HH:mm}");
-            sb.AppendLine($"  Kh\u00E1ch h\u00E0ng:   {_hoaDon.TenKH}");
+            sb.AppendLine("  M\u00E3 H\u0110:        " + _hoaDon.MaHD);
+            sb.AppendLine("  Ng\u00E0y:         " + _hoaDon.NgayHoaDon.ToString("dd/MM/yyyy HH:mm"));
+            sb.AppendLine("  Kh\u00E1ch h\u00E0ng:   " + _hoaDon.TenKH);
             if (!string.IsNullOrEmpty(_hoaDon.SdtKH))
-                sb.AppendLine($"  S\u0110T:          {_hoaDon.SdtKH}");
+                sb.AppendLine("  S\u0110T:          " + _hoaDon.SdtKH);
             if (!string.IsNullOrEmpty(_hoaDon.DiaChiKH))
-                sb.AppendLine($"  \u0110\u1ECBa ch\u1EC9:     {_hoaDon.DiaChiKH}");
-            sb.AppendLine($"  Nh\u00E2n vi\u00EAn:    {_hoaDon.TenNV}");
+                sb.AppendLine("  \u0110\u1ECBa ch\u1EC9:      " + _hoaDon.DiaChiKH);
+            sb.AppendLine("  Nh\u00E3n vi\u00EAn:    " + _hoaDon.TenNV);
             sb.AppendLine();
             sb.AppendLine("--------------------------------------------------------------------------------");
             sb.AppendLine("  STT  | T\u00EAn \u0111\u1ED3 u\u1ED1ng                    | \u0110\u01A1n gi\u00E1      | SL  | Th\u00E0nh ti\u1EC1n");
@@ -76,19 +73,20 @@ namespace QuanLyCuaHangRuou.GUI
             foreach (var item in _hoaDon.Items)
             {
                 string tenDU = item.TenDoUong.Length > 28 ? item.TenDoUong.Substring(0, 25) + "..." : item.TenDoUong;
-                sb.AppendLine($"  {item.STT,3}  | {tenDU,-28} | {item.DonGia,10:N0} | {item.SoLuong,3} | {item.ThanhTien,11:N0}");
+                sb.AppendLine(string.Format("  {0,3}  | {1,-28} | {2,10:N0} | {3,3} | {4,11:N0}", 
+                    item.STT, tenDU, item.DonGia, item.SoLuong, item.ThanhTien));
             }
 
             sb.AppendLine("--------------------------------------------------------------------------------");
-            sb.AppendLine($"                                          T\u1ED4NG C\u1ED8NG: {_hoaDon.TongTien,15:N0} VN\u0110");
+            sb.AppendLine(string.Format("                                          T\u1ED4NG C\u1ED8NG: {0,15:N0} VN\u0110", _hoaDon.TongTien));
             sb.AppendLine("================================================================================");
-            
+
             if (!string.IsNullOrEmpty(_hoaDon.GhiChu))
             {
-                sb.AppendLine($"  Ghi ch\u00FA: {_hoaDon.GhiChu}");
+                sb.AppendLine("  Ghi ch\u00FA: " + _hoaDon.GhiChu);
                 sb.AppendLine();
             }
-            
+
             sb.AppendLine();
             sb.AppendLine("                      C\u1EA3m \u01A1n qu\u00FD kh\u00E1ch \u0111\u00E3 mua h\u00E0ng!");
             sb.AppendLine("                         H\u1EB9n g\u1EB7p l\u1EA1i qu\u00FD kh\u00E1ch!");
@@ -119,14 +117,14 @@ namespace QuanLyCuaHangRuou.GUI
             }
             catch (Exception ex)
             {
-                ShowError("L\u1ED7i in: " + DbConfig.GetInnerMsg(ex));
+                ShowError("L\u1ED7i in: " + ex.Message);
             }
         }
 
         private void PrintDoc_PrintPage(object sender, PrintPageEventArgs e)
         {
-            var font = new Font("Consolas", 10);
-            var fontBold = new Font("Consolas", 12, FontStyle.Bold);
+            var font = new Font("Segoe UI", 10);
+            var fontBold = new Font("Segoe UI", 12, FontStyle.Bold);
             var brush = Brushes.Black;
             float x = 50, y = 50;
             float lineHeight = font.GetHeight(e.Graphics) + 2;
@@ -135,10 +133,10 @@ namespace QuanLyCuaHangRuou.GUI
             e.Graphics.DrawString("H\u00D3A \u0110\u01A0N B\u00C1N H\u00C0NG", fontBold, brush, x + 150, y);
             y += lineHeight * 2;
 
-            e.Graphics.DrawString($"M\u00E3 H\u0110: {_hoaDon.MaHD}", font, brush, x, y); y += lineHeight;
-            e.Graphics.DrawString($"Ng\u00E0y: {_hoaDon.NgayHoaDon:dd/MM/yyyy HH:mm}", font, brush, x, y); y += lineHeight;
-            e.Graphics.DrawString($"Kh\u00E1ch h\u00E0ng: {_hoaDon.TenKH}", font, brush, x, y); y += lineHeight;
-            e.Graphics.DrawString($"Nh\u00E2n vi\u00EAn: {_hoaDon.TenNV}", font, brush, x, y); y += lineHeight * 2;
+            e.Graphics.DrawString("M\u00E3 H\u0110: " + _hoaDon.MaHD, font, brush, x, y); y += lineHeight;
+            e.Graphics.DrawString("Ng\u00E0y: " + _hoaDon.NgayHoaDon.ToString("dd/MM/yyyy HH:mm"), font, brush, x, y); y += lineHeight;
+            e.Graphics.DrawString("Kh\u00E1ch h\u00E0ng: " + _hoaDon.TenKH, font, brush, x, y); y += lineHeight;
+            e.Graphics.DrawString("Nh\u00E3n vi\u00EAn: " + _hoaDon.TenNV, font, brush, x, y); y += lineHeight * 2;
 
             // Table header
             e.Graphics.DrawString("STT", font, brush, x, y);
@@ -166,7 +164,7 @@ namespace QuanLyCuaHangRuou.GUI
             y += 10;
             e.Graphics.DrawLine(Pens.Black, x, y, x + 500, y);
             y += 10;
-            e.Graphics.DrawString($"T\u1ED4NG C\u1ED8NG: {_hoaDon.TongTien:N0} VN\u0110", fontBold, brush, x + 250, y);
+            e.Graphics.DrawString("T\u1ED4NG C\u1ED8NG: " + _hoaDon.TongTien.ToString("N0") + " VN\u0110", fontBold, brush, x + 250, y);
 
             e.HasMorePages = false;
         }
@@ -178,7 +176,7 @@ namespace QuanLyCuaHangRuou.GUI
                 var sfd = new SaveFileDialog
                 {
                     Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
-                    FileName = $"HoaDon_{_hoaDon.MaHD}_{_hoaDon.NgayHoaDon:yyyyMMdd}.txt",
+                    FileName = "HoaDon_" + _hoaDon.MaHD + "_" + _hoaDon.NgayHoaDon.ToString("yyyyMMdd") + ".txt",
                     Title = "Xu\u1EA5t h\u00F3a \u0111\u01A1n"
                 };
 
@@ -190,7 +188,7 @@ namespace QuanLyCuaHangRuou.GUI
             }
             catch (Exception ex)
             {
-                ShowError("L\u1ED7i xu\u1EA5t file: " + DbConfig.GetInnerMsg(ex));
+                ShowError("L\u1ED7i xu\u1EA5t file: " + ex.Message);
             }
         }
 
@@ -199,7 +197,7 @@ namespace QuanLyCuaHangRuou.GUI
             Close();
         }
 
-        private void ShowError(string msg) => MessageBox.Show(this, msg, "L\u1ED7i", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        private void ShowInfo(string msg) => MessageBox.Show(this, msg, "Th\u00F4ng b\u00E1o", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void ShowError(string msg) => MessageBox.Show(this, msg, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        private void ShowInfo(string msg) => MessageBox.Show(this, msg, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 }
