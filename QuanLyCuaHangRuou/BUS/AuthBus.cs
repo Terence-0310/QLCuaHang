@@ -27,7 +27,7 @@ namespace QuanLyCuaHangRuou.BUS
                 if (!result.ok)
                     return BusResult<string>.Fail(result.error);
 
-                // Thi?t l?p session
+                // Thiết lập session
                 AppSession.CurrentUser = username;
                 AppSession.CurrentRole = result.role;
                 try { AppSession.CurrentMaNV = NhanVienDal.GetByUsername(username)?.MaNV; } catch { }
