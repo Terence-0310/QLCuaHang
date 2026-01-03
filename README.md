@@ -64,7 +64,4 @@ Phần mềm **Quản Lý Cửa Hàng Rượu** được xây dựng nhằm hỗ
 | Bán hàng | ✔ | ✔ | ✔ |
 | Đổi vai trò nhân viên | ✔ | ✖ | ✖ |
 
----
-
-## Cấu trúc Project
 
