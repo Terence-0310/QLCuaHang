@@ -61,7 +61,7 @@ Phần mềm **Quản Lý Cửa Hàng Rượu** được xây dựng nhằm hỗ
 | Thành viên | Công việc |
 |-----------|----------|
 | Nguyễn Đức Anh Tài | Thiết kế cơ sở dữ liệu, định nghĩa Model, kiểm tra nghiệp vụ |
-| Trần Hồng Đức | CRUD đồ uống, xử lý BUS & DAL đồ uống |
+| Trần Hồng Đức | CRUD đồ uống, thiết kế GUI đồ uống |
 | Lê Tấn Tài | CRUD khách hàng và nhân viên |
 | Trần Anh Trung | CRUD ký gửi rượu |
 
