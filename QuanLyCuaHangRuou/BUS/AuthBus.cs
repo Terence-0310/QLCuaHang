@@ -5,12 +5,12 @@ using QuanLyCuaHangRuou.DAL;
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho X�c Th?c
+    /// Business Logic cho Xác Thực
     /// </summary>
     public static class AuthBus
     {
         /// <summary>
-        /// ??ng nh?p
+        /// Đăng nhập
         /// </summary>
         public static BusResult<string> Login(string username, string password)
         {
@@ -41,12 +41,12 @@ namespace QuanLyCuaHangRuou.BUS
         }
 
         /// <summary>
-        /// ??ng xu?t
+        /// Đăng xuất
         /// </summary>
         public static void Logout() => AppSession.Clear();
 
         /// <summary>
-        /// Ki?m tra ?� ??ng nh?p
+        /// Kiểm tra đăng nhập
         /// </summary>
         public static bool IsLoggedIn => !string.IsNullOrWhiteSpace(AppSession.CurrentUser);
     }
