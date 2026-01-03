@@ -60,10 +60,10 @@ Phần mềm **Quản Lý Cửa Hàng Rượu** được xây dựng nhằm hỗ
 
 | Thành viên | Công việc |
 |-----------|----------|
-| Thành viên 1 | Thiết kế cơ sở dữ liệu, định nghĩa Model, kiểm tra nghiệp vụ |
-| Thành viên 2 | CRUD đồ uống, xử lý BUS & DAL đồ uống |
-| Thành viên 3 | CRUD khách hàng và nhân viên |
-| Thành viên 4 | CRUD ký gửi rượu |
+| Nguyễn Đức Anh Tài | Thiết kế cơ sở dữ liệu, định nghĩa Model, kiểm tra nghiệp vụ |
+| Trần Hồng Đức | CRUD đồ uống, xử lý BUS & DAL đồ uống |
+| Lê Tấn Tài | CRUD khách hàng và nhân viên |
+| Trần Anh Trung | CRUD ký gửi rượu |
 
 ---
 
@@ -71,10 +71,10 @@ Phần mềm **Quản Lý Cửa Hàng Rượu** được xây dựng nhằm hỗ
 
 | Thành viên | Công việc |
 |-----------|----------|
-| Thành viên 1 | Thiết kế luồng bán hàng, kiểm tra tồn kho |
-| Thành viên 2 | Giao diện giỏ hàng |
-| Thành viên 3 | Xử lý hóa đơn và lưu dữ liệu |
-| Thành viên 4 | Xuất hóa đơn HTML |
+| Nguyễn Đức Anh Tài | Thiết kế luồng bán hàng, kiểm tra tồn kho |
+| Trần Hồng Đức | Giao diện giỏ hàng |
+| Lê Tấn Tài | Xử lý hóa đơn và lưu dữ liệu |
+| Trần Anh Trung | Xuất hóa đơn HTML |
 
 ---
 
@@ -82,10 +82,10 @@ Phần mềm **Quản Lý Cửa Hàng Rượu** được xây dựng nhằm hỗ
 
 | Thành viên | Công việc |
 |-----------|----------|
-| Thành viên 1 | Định nghĩa nghiệp vụ báo cáo |
-| Thành viên 2 | Truy vấn dữ liệu tồn kho |
-| Thành viên 3 | Báo cáo doanh thu |
-| Thành viên 4 | Xuất Excel, kiểm tra dữ liệu |
+| Nguyễn Đức Anh Tài | Định nghĩa nghiệp vụ báo cáo |
+| Trần Hồng Đức | Truy vấn dữ liệu tồn kho |
+| Lê Tấn Tài | Báo cáo doanh thu |
+| Trần Anh Trung | Xuất Excel, kiểm tra dữ liệu |
 
 ---
 
@@ -93,33 +93,33 @@ Phần mềm **Quản Lý Cửa Hàng Rượu** được xây dựng nhằm hỗ
 
 | Thành viên | Công việc |
 |-----------|----------|
-| Thành viên 1 | Đăng nhập, phân quyền, quản lý session |
-| Thành viên 2 | Kiểm tra quyền giao diện |
-| Thành viên 3 | Hỗ trợ test phân quyền |
-| Thành viên 4 | Kiểm thử toàn hệ thống |
+| Nguyễn Đức Anh Tài | Đăng nhập, phân quyền, quản lý session |
+| Trần Hồng Đức | Kiểm tra quyền giao diện |
+| Lê Tấn Tài | Hỗ trợ test phân quyền |
+| Trần Anh Trung | Kiểm thử toàn hệ thống |
 
 ---
 
 ## Đánh giá đóng góp từng thành viên
 
-### Thành viên 1 – Trưởng nhóm (40%)
+### Nguyễn Đức Anh Tài – Trưởng nhóm (40%)
 - Phân tích yêu cầu và thiết kế tổng thể hệ thống  
 - Xây dựng cấu trúc dự án theo mô hình 3 Layer  
 - Quản lý cơ sở dữ liệu và nghiệp vụ chính  
 - Tích hợp hệ thống, kiểm thử và sửa lỗi  
 - Hoàn thiện tài liệu và báo cáo đồ án  
 
-### Thành viên 2 (20%)
+### Trần Hồng Đức (20%)
 - Thực hiện chức năng quản lý đồ uống  
 - Thiết kế giao diện rõ ràng, dễ sử dụng  
 - Hoàn thành công việc đúng tiến độ  
 
-### Thành viên 3 (20%)
+### Lê Tấn Tài (20%)
 - Xây dựng chức năng quản lý khách hàng và nhân viên  
 - Hỗ trợ xử lý nghiệp vụ và kiểm tra dữ liệu  
 - Phối hợp tốt với các thành viên trong nhóm  
 
-### Thành viên 4 (20%)
+### Trần Anh Trung (20%)
 - Xây dựng chức năng ký gửi rượu và báo cáo  
 - Hỗ trợ xuất dữ liệu và kiểm thử  
 - Có tinh thần trách nhiệm và hỗ trợ nhóm  
