@@ -114,5 +114,10 @@ namespace QuanLyCuaHangRuou.GUI
         }
 
         private void ShowError(string msg) => MessageBox.Show(this, msg, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        private void mnuHeThong_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

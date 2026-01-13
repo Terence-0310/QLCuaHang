@@ -1,4 +1,4 @@
-namespace QuanLyCuaHangRuou.GUI
+﻿namespace QuanLyCuaHangRuou.GUI
 {
     partial class FrmKhachHang
     {
@@ -53,20 +53,30 @@ namespace QuanLyCuaHangRuou.GUI
             this.panelButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKhachHang)).BeginInit();
             this.SuspendLayout();
+            // 
             // splitContainer
+            // 
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer.Location = new System.Drawing.Point(10, 10);
             this.splitContainer.Name = "splitContainer";
             this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer.Panel1
+            // 
             this.splitContainer.Panel1.Controls.Add(this.grpThongTin);
             this.splitContainer.Panel1.Controls.Add(this.grpHinh);
             this.splitContainer.Panel1.Controls.Add(this.panelBottom);
+            // 
+            // splitContainer.Panel2
+            // 
             this.splitContainer.Panel2.Controls.Add(this.dgvKhachHang);
             this.splitContainer.Size = new System.Drawing.Size(964, 541);
             this.splitContainer.SplitterDistance = 180;
             this.splitContainer.TabIndex = 0;
+            // 
             // grpThongTin
+            // 
             this.grpThongTin.Controls.Add(this.tableInputs);
             this.grpThongTin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpThongTin.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
@@ -75,8 +85,10 @@ namespace QuanLyCuaHangRuou.GUI
             this.grpThongTin.Size = new System.Drawing.Size(764, 130);
             this.grpThongTin.TabIndex = 0;
             this.grpThongTin.TabStop = false;
-            this.grpThongTin.Text = "Th\u00F4ng tin kh\u00E1ch h\u00E0ng";
+            this.grpThongTin.Text = "Thông tin khách hàng";
+            // 
             // tableInputs
+            // 
             this.tableInputs.ColumnCount = 4;
             this.tableInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableInputs.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -101,45 +113,57 @@ namespace QuanLyCuaHangRuou.GUI
             this.tableInputs.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableInputs.Size = new System.Drawing.Size(758, 104);
             this.tableInputs.TabIndex = 0;
+            // 
             // lblMa
+            // 
             this.lblMa.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblMa.Location = new System.Drawing.Point(3, 0);
             this.lblMa.Name = "lblMa";
             this.lblMa.Size = new System.Drawing.Size(74, 23);
             this.lblMa.TabIndex = 0;
-            this.lblMa.Text = "M\u00E3 KH:";
+            this.lblMa.Text = "Mã KH:";
             this.lblMa.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // txtMaKH
+            // 
             this.txtMaKH.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtMaKH.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtMaKH.Location = new System.Drawing.Point(83, 3);
             this.txtMaKH.Name = "txtMaKH";
             this.txtMaKH.Size = new System.Drawing.Size(293, 27);
             this.txtMaKH.TabIndex = 1;
+            // 
             // lblTen
+            // 
             this.lblTen.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblTen.Location = new System.Drawing.Point(3, 35);
             this.lblTen.Name = "lblTen";
             this.lblTen.Size = new System.Drawing.Size(74, 23);
             this.lblTen.TabIndex = 2;
-            this.lblTen.Text = "T\u00EAn KH:";
+            this.lblTen.Text = "Tên KH:";
             this.lblTen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // txtTenKH
+            // 
             this.txtTenKH.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtTenKH.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtTenKH.Location = new System.Drawing.Point(83, 38);
             this.txtTenKH.Name = "txtTenKH";
             this.txtTenKH.Size = new System.Drawing.Size(293, 27);
             this.txtTenKH.TabIndex = 3;
+            // 
             // lblSDT
+            // 
             this.lblSDT.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblSDT.Location = new System.Drawing.Point(382, 0);
             this.lblSDT.Name = "lblSDT";
             this.lblSDT.Size = new System.Drawing.Size(74, 23);
             this.lblSDT.TabIndex = 4;
-            this.lblSDT.Text = "S\u0110T:";
+            this.lblSDT.Text = "SĐT:";
             this.lblSDT.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // txtSDT
+            // 
             this.txtSDT.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSDT.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtSDT.Location = new System.Drawing.Point(462, 3);
@@ -147,30 +171,38 @@ namespace QuanLyCuaHangRuou.GUI
             this.txtSDT.Size = new System.Drawing.Size(293, 27);
             this.txtSDT.TabIndex = 5;
             this.txtSDT.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtSDT_KeyPress);
+            // 
             // lblDiaChi
+            // 
             this.lblDiaChi.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblDiaChi.Location = new System.Drawing.Point(382, 35);
             this.lblDiaChi.Name = "lblDiaChi";
             this.lblDiaChi.Size = new System.Drawing.Size(74, 23);
             this.lblDiaChi.TabIndex = 6;
-            this.lblDiaChi.Text = "\u0110\u1ECBa ch\u1EC9:";
+            this.lblDiaChi.Text = "Địa chỉ:";
             this.lblDiaChi.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // txtDiaChi
+            // 
             this.txtDiaChi.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtDiaChi.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtDiaChi.Location = new System.Drawing.Point(462, 38);
             this.txtDiaChi.Name = "txtDiaChi";
             this.txtDiaChi.Size = new System.Drawing.Size(293, 27);
             this.txtDiaChi.TabIndex = 7;
+            // 
             // lblTrangThai
+            // 
             this.lblTrangThai.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblTrangThai.Location = new System.Drawing.Point(3, 70);
             this.lblTrangThai.Name = "lblTrangThai";
             this.lblTrangThai.Size = new System.Drawing.Size(74, 23);
             this.lblTrangThai.TabIndex = 8;
-            this.lblTrangThai.Text = "Tr\u1EA1ng th\u00E1i:";
+            this.lblTrangThai.Text = "Trạng thái:";
             this.lblTrangThai.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // cboTrangThai
+            // 
             this.cboTrangThai.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboTrangThai.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboTrangThai.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -178,7 +210,9 @@ namespace QuanLyCuaHangRuou.GUI
             this.cboTrangThai.Name = "cboTrangThai";
             this.cboTrangThai.Size = new System.Drawing.Size(293, 28);
             this.cboTrangThai.TabIndex = 9;
+            // 
             // grpHinh
+            // 
             this.grpHinh.Controls.Add(this.picKhachHang);
             this.grpHinh.Controls.Add(this.panelImageButtons);
             this.grpHinh.Dock = System.Windows.Forms.DockStyle.Right;
@@ -188,8 +222,10 @@ namespace QuanLyCuaHangRuou.GUI
             this.grpHinh.Size = new System.Drawing.Size(200, 130);
             this.grpHinh.TabIndex = 1;
             this.grpHinh.TabStop = false;
-            this.grpHinh.Text = "H\u00ECnh \u1EA3nh";
+            this.grpHinh.Text = "Hình ảnh";
+            // 
             // picKhachHang
+            // 
             this.picKhachHang.BackColor = System.Drawing.Color.WhiteSmoke;
             this.picKhachHang.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picKhachHang.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -199,7 +235,9 @@ namespace QuanLyCuaHangRuou.GUI
             this.picKhachHang.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picKhachHang.TabIndex = 0;
             this.picKhachHang.TabStop = false;
+            // 
             // panelImageButtons
+            // 
             this.panelImageButtons.Controls.Add(this.btnChonHinh);
             this.panelImageButtons.Controls.Add(this.btnXoaHinh);
             this.panelImageButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -207,21 +245,27 @@ namespace QuanLyCuaHangRuou.GUI
             this.panelImageButtons.Name = "panelImageButtons";
             this.panelImageButtons.Size = new System.Drawing.Size(194, 30);
             this.panelImageButtons.TabIndex = 1;
+            // 
             // btnChonHinh
+            // 
             this.btnChonHinh.Location = new System.Drawing.Point(3, 3);
             this.btnChonHinh.Name = "btnChonHinh";
             this.btnChonHinh.Size = new System.Drawing.Size(90, 25);
             this.btnChonHinh.TabIndex = 0;
-            this.btnChonHinh.Text = "Ch\u1ECDn \u1EA3nh";
+            this.btnChonHinh.Text = "Chọn ảnh";
             this.btnChonHinh.Click += new System.EventHandler(this.btnChonHinh_Click);
+            // 
             // btnXoaHinh
+            // 
             this.btnXoaHinh.Location = new System.Drawing.Point(99, 3);
             this.btnXoaHinh.Name = "btnXoaHinh";
             this.btnXoaHinh.Size = new System.Drawing.Size(90, 25);
             this.btnXoaHinh.TabIndex = 1;
-            this.btnXoaHinh.Text = "X\u00F3a \u1EA3nh";
+            this.btnXoaHinh.Text = "Xóa ảnh";
             this.btnXoaHinh.Click += new System.EventHandler(this.btnXoaHinh_Click);
+            // 
             // panelBottom
+            // 
             this.panelBottom.Controls.Add(this.panelSearch);
             this.panelBottom.Controls.Add(this.panelButtons);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -229,7 +273,9 @@ namespace QuanLyCuaHangRuou.GUI
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(964, 50);
             this.panelBottom.TabIndex = 2;
+            // 
             // panelSearch
+            // 
             this.panelSearch.Controls.Add(this.lblTim);
             this.panelSearch.Controls.Add(this.txtTim);
             this.panelSearch.Controls.Add(this.btnTim);
@@ -239,33 +285,42 @@ namespace QuanLyCuaHangRuou.GUI
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Size = new System.Drawing.Size(514, 50);
             this.panelSearch.TabIndex = 0;
+            // 
             // lblTim
+            // 
             this.lblTim.AutoSize = true;
             this.lblTim.Location = new System.Drawing.Point(8, 17);
             this.lblTim.Name = "lblTim";
-            this.lblTim.Size = new System.Drawing.Size(71, 20);
+            this.lblTim.Size = new System.Drawing.Size(0, 20);
             this.lblTim.TabIndex = 0;
-            this.lblTim.Text = "";
+            // 
             // txtTim
+            // 
             this.txtTim.Location = new System.Drawing.Point(85, 14);
             this.txtTim.Name = "txtTim";
             this.txtTim.Size = new System.Drawing.Size(200, 27);
             this.txtTim.TabIndex = 1;
+            // 
             // btnTim
+            // 
             this.btnTim.Location = new System.Drawing.Point(291, 12);
             this.btnTim.Name = "btnTim";
             this.btnTim.Size = new System.Drawing.Size(75, 27);
             this.btnTim.TabIndex = 2;
-            this.btnTim.Text = "T\u00ECm";
+            this.btnTim.Text = "Tìm";
             this.btnTim.Click += new System.EventHandler(this.btnTim_Click);
+            // 
             // btnLamMoi
+            // 
             this.btnLamMoi.Location = new System.Drawing.Point(372, 12);
             this.btnLamMoi.Name = "btnLamMoi";
             this.btnLamMoi.Size = new System.Drawing.Size(85, 27);
             this.btnLamMoi.TabIndex = 3;
-            this.btnLamMoi.Text = "L\u00E0m m\u1EDBi";
+            this.btnLamMoi.Text = "Làm mới";
             this.btnLamMoi.Click += new System.EventHandler(this.btnLamMoi_Click);
+            // 
             // panelButtons
+            // 
             this.panelButtons.Controls.Add(this.btnThem);
             this.panelButtons.Controls.Add(this.btnSua);
             this.panelButtons.Controls.Add(this.btnXoa);
@@ -276,50 +331,60 @@ namespace QuanLyCuaHangRuou.GUI
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Size = new System.Drawing.Size(450, 50);
             this.panelButtons.TabIndex = 1;
+            // 
             // btnThem
-            this.btnThem.BackColor = System.Drawing.Color.FromArgb(40, 167, 69);
+            // 
+            this.btnThem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(167)))), ((int)(((byte)(69)))));
             this.btnThem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnThem.ForeColor = System.Drawing.Color.White;
             this.btnThem.Location = new System.Drawing.Point(8, 12);
             this.btnThem.Name = "btnThem";
             this.btnThem.Size = new System.Drawing.Size(80, 27);
             this.btnThem.TabIndex = 0;
-            this.btnThem.Text = "Th\u00EAm";
+            this.btnThem.Text = "Thêm";
             this.btnThem.UseVisualStyleBackColor = false;
             this.btnThem.Click += new System.EventHandler(this.btnThem_Click);
+            // 
             // btnSua
-            this.btnSua.BackColor = System.Drawing.Color.FromArgb(0, 123, 255);
+            // 
+            this.btnSua.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(123)))), ((int)(((byte)(255)))));
             this.btnSua.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSua.ForeColor = System.Drawing.Color.White;
             this.btnSua.Location = new System.Drawing.Point(94, 12);
             this.btnSua.Name = "btnSua";
             this.btnSua.Size = new System.Drawing.Size(80, 27);
             this.btnSua.TabIndex = 1;
-            this.btnSua.Text = "S\u1EEDa";
+            this.btnSua.Text = "Sửa";
             this.btnSua.UseVisualStyleBackColor = false;
             this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
+            // 
             // btnXoa
-            this.btnXoa.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
+            // 
+            this.btnXoa.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(53)))), ((int)(((byte)(69)))));
             this.btnXoa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnXoa.ForeColor = System.Drawing.Color.White;
             this.btnXoa.Location = new System.Drawing.Point(180, 12);
             this.btnXoa.Name = "btnXoa";
             this.btnXoa.Size = new System.Drawing.Size(80, 27);
             this.btnXoa.TabIndex = 2;
-            this.btnXoa.Text = "X\u00F3a";
+            this.btnXoa.Text = "Xóa";
             this.btnXoa.UseVisualStyleBackColor = false;
             this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
+            // 
             // btnLuu
-            this.btnLuu.BackColor = System.Drawing.Color.FromArgb(255, 193, 7);
+            // 
+            this.btnLuu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(193)))), ((int)(((byte)(7)))));
             this.btnLuu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLuu.Location = new System.Drawing.Point(276, 12);
             this.btnLuu.Name = "btnLuu";
             this.btnLuu.Size = new System.Drawing.Size(80, 27);
             this.btnLuu.TabIndex = 3;
-            this.btnLuu.Text = "L\u01B0u";
+            this.btnLuu.Text = "Lưu";
             this.btnLuu.UseVisualStyleBackColor = false;
             this.btnLuu.Click += new System.EventHandler(this.btnLuu_Click);
+            // 
             // btnHuy
+            // 
             this.btnHuy.BackColor = System.Drawing.Color.Gray;
             this.btnHuy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHuy.ForeColor = System.Drawing.Color.White;
@@ -327,10 +392,12 @@ namespace QuanLyCuaHangRuou.GUI
             this.btnHuy.Name = "btnHuy";
             this.btnHuy.Size = new System.Drawing.Size(80, 27);
             this.btnHuy.TabIndex = 4;
-            this.btnHuy.Text = "H\u1EE7y";
+            this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = false;
             this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
+            // 
             // dgvKhachHang
+            // 
             this.dgvKhachHang.AllowUserToAddRows = false;
             this.dgvKhachHang.AllowUserToDeleteRows = false;
             this.dgvKhachHang.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -346,7 +413,9 @@ namespace QuanLyCuaHangRuou.GUI
             this.dgvKhachHang.Size = new System.Drawing.Size(964, 357);
             this.dgvKhachHang.TabIndex = 0;
             this.dgvKhachHang.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKhachHang_CellClick);
+            // 
             // FrmKhachHang
+            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 561);
@@ -355,7 +424,6 @@ namespace QuanLyCuaHangRuou.GUI
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmKhachHang";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Text = "";
             this.Load += new System.EventHandler(this.FrmKhachHang_Load);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
@@ -373,6 +441,7 @@ namespace QuanLyCuaHangRuou.GUI
             this.panelButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvKhachHang)).EndInit();
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.SplitContainer splitContainer;

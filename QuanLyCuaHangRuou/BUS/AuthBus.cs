@@ -1,53 +1,34 @@
 using System;
 using QuanLyCuaHangRuou.Common;
 using QuanLyCuaHangRuou.DAL;
+using QuanLyCuaHangRuou.BLL;
 
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Xác Thực
+    /// Business Service cho X�c Th?c (Facade cho GUI)
     /// </summary>
     public static class AuthBus
     {
         /// <summary>
-        /// Đăng nhập
+        /// ??ng nh?p
         /// </summary>
         public static BusResult<string> Login(string username, string password)
         {
-            try
-            {
-                username = (username ?? "").Trim();
-                if (username.Length == 0)
-                    return BusResult<string>.Fail(Res.EnterUsername);
-
-                if (string.IsNullOrEmpty(password))
-                    return BusResult<string>.Fail(Res.EnterPassword);
-
-                var result = AuthDal.Login(username, password);
-                if (!result.ok)
-                    return BusResult<string>.Fail(result.error);
-
-                // Thiết lập session
-                AppSession.CurrentUser = username;
-                AppSession.CurrentRole = result.role;
-                try { AppSession.CurrentMaNV = NhanVienDal.GetByUsername(username)?.MaNV; } catch { }
-
-                return BusResult<string>.Ok(result.role);
-            }
-            catch (Exception ex)
-            {
-                return BusResult<string>.Fail("L?i ??ng nh?p: " + ex.Message);
-            }
+            var (success, message, role) = AuthBll.Login(username, password);
+            return success 
+                ? BusResult<string>.Ok(role, message) 
+                : BusResult<string>.Fail(message);
         }
 
         /// <summary>
-        /// Đăng xuất
+        /// ??ng xu?t
         /// </summary>
-        public static void Logout() => AppSession.Clear();
+        public static void Logout() => AuthBll.Logout();
 
         /// <summary>
-        /// Kiểm tra đăng nhập
+        /// Ki?m tra ?� ??ng nh?p
         /// </summary>
-        public static bool IsLoggedIn => !string.IsNullOrWhiteSpace(AppSession.CurrentUser);
+        public static bool IsLoggedIn => AuthBll.IsLoggedIn;
     }
 }

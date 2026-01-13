@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 
 namespace QuanLyCuaHangRuou.BUS
-{
-    /// <summary>
-    /// K?t qu? tr? v? t? BUS layer
-    /// </summary>
+{ 
     public class BusResult
     {
         public bool Success { get; set; }
@@ -14,9 +11,7 @@ namespace QuanLyCuaHangRuou.BUS
         public static BusResult Fail(string msg) => new BusResult { Success = false, Message = msg };
     }
 
-    /// <summary>
-    /// K?t qu? tr? v? t? BUS layer v?i d? li?u
-    /// </summary>
+
     public class BusResult<T> : BusResult
     {
         public T Data { get; set; }

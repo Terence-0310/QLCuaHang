@@ -7,7 +7,8 @@ using QuanLyCuaHangRuou.Common;
 namespace QuanLyCuaHangRuou.DAL
 {
     /// <summary>
-    /// Quản lý nhân viên
+    /// Data Access Layer cho Nhân Viên
+    /// Chỉ CRUD đơn giản
     /// </summary>
     public static class NhanVienDal
     {
@@ -25,6 +26,9 @@ namespace QuanLyCuaHangRuou.DAL
             public string MaTK { get; set; }
         }
 
+        /// <summary>
+        /// Lấy tất cả nhân viên
+        /// </summary>
         public static List<NhanVienGridRow> GetAllForGrid() => DbConfig.Use(db =>
             db.NhanViens.Select(x => new NhanVienGridRow
             {
@@ -40,15 +44,25 @@ namespace QuanLyCuaHangRuou.DAL
                 MaTK = x.MaTK
             }).ToList());
 
-        public static List<NhanVienGridRow> SearchForGrid(string kw) => DbConfig.Use(db =>
+        /// <summary>
+        /// Tìm kiếm nhân viên
+        /// </summary>
+        public static List<NhanVienGridRow> SearchForGrid(string keyword) => DbConfig.Use(db =>
         {
-            kw = (kw ?? "").Trim();
-            var q = db.NhanViens.AsQueryable();
-            if (kw.Length > 0)
-                q = q.Where(x => x.MaNV.Contains(kw) || x.TenNV.Contains(kw) ||
-                                x.SoDienThoai.Contains(kw) || x.DiaChi.Contains(kw) ||
-                                (x.TaiKhoan != null && x.TaiKhoan.Username.Contains(kw)));
-            return q.Select(x => new NhanVienGridRow
+            keyword = (keyword ?? "").Trim();
+            var query = db.NhanViens.AsQueryable();
+            
+            if (keyword.Length > 0)
+            {
+                query = query.Where(x => 
+                    x.MaNV.Contains(keyword) || 
+                    x.TenNV.Contains(keyword) ||
+                    x.SoDienThoai.Contains(keyword) || 
+                    x.DiaChi.Contains(keyword) ||
+                    (x.TaiKhoan != null && x.TaiKhoan.Username.Contains(keyword)));
+            }
+            
+            return query.Select(x => new NhanVienGridRow
             {
                 MaNV = x.MaNV,
                 TenNV = x.TenNV,
@@ -63,37 +77,74 @@ namespace QuanLyCuaHangRuou.DAL
             }).ToList();
         });
 
-        public static bool ExistsMaNV(string id) =>
-            !string.IsNullOrWhiteSpace(id) && DbConfig.Use(db => db.NhanViens.Any(x => x.MaNV == id));
+        /// <summary>
+        /// Kiểm tra mã nhân viên tồn tại
+        /// </summary>
+        public static bool ExistsMaNV(string maNV)
+        {
+            if (string.IsNullOrWhiteSpace(maNV))
+                return false;
 
-        public static NhanVien GetById(string id) =>
-            string.IsNullOrWhiteSpace(id) ? null : DbConfig.Use(db =>
-                db.NhanViens.Include(n => n.TaiKhoan).Include(n => n.TaiKhoan.VaiTro).FirstOrDefault(x => x.MaNV == id));
+            return DbConfig.Use(db => db.NhanViens.Any(x => x.MaNV == maNV));
+        }
 
+        /// <summary>
+        /// Lấy nhân viên theo mã
+        /// </summary>
+        public static NhanVien GetById(string maNV)
+        {
+            if (string.IsNullOrWhiteSpace(maNV))
+                return null;
+
+            return DbConfig.Use(db =>
+                db.NhanViens
+                    .Include(n => n.TaiKhoan)
+                    .Include(n => n.TaiKhoan.VaiTro)
+                    .FirstOrDefault(x => x.MaNV == maNV));
+        }
+
+        /// <summary>
+        /// Lấy nhân viên theo username
+        /// </summary>
         public static NhanVien GetByUsername(string username)
         {
             username = (username ?? "").Trim();
-            return username.Length == 0 ? null : DbConfig.Use(db =>
-                db.NhanViens.Include(n => n.TaiKhoan).FirstOrDefault(x => x.TaiKhoan != null && x.TaiKhoan.Username == username));
+            if (username.Length == 0)
+                return null;
+
+            return DbConfig.Use(db =>
+                db.NhanViens
+                    .Include(n => n.TaiKhoan)
+                    .FirstOrDefault(x => x.TaiKhoan != null && x.TaiKhoan.Username == username));
         }
 
-        public static void AddWithAccount(NhanVien nv, TaiKhoan tk)
+        /// <summary>
+        /// Kiểm tra có hóa đơn liên quan không
+        /// </summary>
+        public static bool HasInvoices(string maNV)
         {
-            if (nv == null || tk == null || string.IsNullOrWhiteSpace(nv.MaNV) || string.IsNullOrWhiteSpace(nv.TenNV))
-                throw new ArgumentException("Thông tin nhân viên không hợp lệ");
+            if (string.IsNullOrWhiteSpace(maNV))
+                return false;
 
-            if (!AppSession.IsAdmin && (tk.MaVaiTro == PermissionKeys.RoleAdmin || tk.MaVaiTro == PermissionKeys.RoleManager))
-                throw new InvalidOperationException(Res.CannotCreateAdmin);
+            return DbConfig.Use(db => db.HoaDons.Any(x => x.MaNV == maNV));
+        }
+
+        /// <summary>
+        /// Thêm nhân viên cùng tài khoản
+        /// </summary>
+        public static void AddWithAccount(NhanVien nhanVien, TaiKhoan taiKhoan)
+        {
+            if (nhanVien == null || taiKhoan == null)
+                throw new ArgumentNullException("Thông tin nhân viên/tài khoản không hợp lệ");
 
             using (var db = DbConfig.Create())
             using (var tx = db.Database.BeginTransaction())
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(nv.TrangThai)) nv.TrangThai = Res.StatusWorking;
-                    db.TaiKhoans.Add(tk);
-                    nv.MaTK = tk.MaTK;
-                    db.NhanViens.Add(nv);
+                    db.TaiKhoans.Add(taiKhoan);
+                    nhanVien.MaTK = taiKhoan.MaTK;
+                    db.NhanViens.Add(nhanVien);
                     db.SaveChanges();
                     tx.Commit();
                 }
@@ -105,84 +156,111 @@ namespace QuanLyCuaHangRuou.DAL
             }
         }
 
-        public static void UpdateWithRoleAndStatus(string maNv, string tenNv, string sdt, string diaChi, string trangThai, string vaiTro, string maTK)
+        /// <summary>
+        /// Cập nhật nhân viên và vai trò
+        /// </summary>
+        public static void UpdateWithRoleAndStatus(string maNV, string tenNV, string sdt, string diaChi, string trangThai, string vaiTro, string maTK)
         {
-            if (string.IsNullOrWhiteSpace(maNv)) throw new ArgumentException("Mã NV không hợp lệ");
+            if (string.IsNullOrWhiteSpace(maNV))
+                throw new ArgumentException("Mã NV không hợp lệ");
 
             DbConfig.Use(db =>
             {
-                var nv = db.NhanViens.Include(x => x.TaiKhoan).FirstOrDefault(x => x.MaNV == maNv)
-                    ?? throw new InvalidOperationException("Không tìm thấy nhân viên");
+                var nhanVien = db.NhanViens.Include(x => x.TaiKhoan).FirstOrDefault(x => x.MaNV == maNV);
+                if (nhanVien == null)
+                    throw new InvalidOperationException("Không tìm thấy nhân viên");
 
-                nv.TenNV = tenNv;
-                nv.SoDienThoai = sdt;
-                nv.DiaChi = diaChi;
-                nv.TrangThai = trangThai;
+                nhanVien.TenNV = tenNV;
+                nhanVien.SoDienThoai = sdt;
+                nhanVien.DiaChi = diaChi;
+                nhanVien.TrangThai = trangThai;
 
-                if (nv.TaiKhoan != null)
+                if (nhanVien.TaiKhoan != null)
                 {
-                    nv.TaiKhoan.TrangThai = (trangThai == Res.StatusWorking);
-
-                    if (AppSession.IsAdmin && !string.IsNullOrWhiteSpace(vaiTro))
-                    {
-                        if (nv.TaiKhoan.Username?.ToLower() == "admin" && vaiTro != PermissionKeys.RoleAdmin)
-                            throw new InvalidOperationException(Res.CannotChangeAdminRole);
-                        nv.TaiKhoan.MaVaiTro = vaiTro;
-                    }
+                    nhanVien.TaiKhoan.TrangThai = (trangThai == Res.StatusWorking);
+                    
+                    if (!string.IsNullOrWhiteSpace(vaiTro))
+                        nhanVien.TaiKhoan.MaVaiTro = vaiTro;
                 }
+
                 db.SaveChanges();
             });
         }
 
-        public static void Delete(string id)
+        /// <summary>
+        /// Soft delete - chỉ đổi trạng thái
+        /// </summary>
+        public static void SoftDelete(string maNV)
         {
-            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Mã NV không hợp lệ");
+            if (string.IsNullOrWhiteSpace(maNV))
+                throw new ArgumentException("Mã NV không hợp lệ");
+
+            DbConfig.Use(db =>
+            {
+                var nhanVien = db.NhanViens.Include(x => x.TaiKhoan).FirstOrDefault(x => x.MaNV == maNV);
+                if (nhanVien == null)
+                    throw new InvalidOperationException("Không tìm thấy nhân viên");
+
+                nhanVien.TrangThai = Res.StatusQuit;
+                if (nhanVien.TaiKhoan != null)
+                    nhanVien.TaiKhoan.TrangThai = false;
+
+                db.SaveChanges();
+            });
+        }
+
+        /// <summary>
+        /// Hard delete - xóa hoàn toàn
+        /// </summary>
+        public static void HardDelete(string maNV)
+        {
+            if (string.IsNullOrWhiteSpace(maNV))
+                throw new ArgumentException("Mã NV không hợp lệ");
 
             using (var db = DbConfig.Create())
             using (var tx = db.Database.BeginTransaction())
             {
                 try
                 {
-                    var nv = db.NhanViens.Include(x => x.TaiKhoan).FirstOrDefault(x => x.MaNV == id)
-                        ?? throw new InvalidOperationException("Không tìm thấy nhân viên");
+                    var nhanVien = db.NhanViens.Include(x => x.TaiKhoan).FirstOrDefault(x => x.MaNV == maNV);
+                    if (nhanVien == null)
+                        throw new InvalidOperationException("Không tìm thấy nhân viên");
 
-                    var username = nv.TaiKhoan?.Username ?? "";
-                    var role = nv.TaiKhoan?.MaVaiTro ?? "";
+                    // Gỡ liên kết hóa đơn
+                    foreach (var hd in db.HoaDons.Where(x => x.MaNV == maNV))
+                        hd.MaNV = null;
 
-                    if (!AppSession.CanDeleteEmployeeWithRole(role, username))
-                    {
-                        if (string.Equals(AppSession.CurrentUser, username, StringComparison.OrdinalIgnoreCase))
-                            throw new InvalidOperationException(Res.CannotDeleteSelf);
-                        if (role.Equals(PermissionKeys.RoleAdmin, StringComparison.OrdinalIgnoreCase) &&
-                            username.Equals("admin", StringComparison.OrdinalIgnoreCase))
-                            throw new InvalidOperationException(Res.CannotDeleteAdmin);
-                        throw new InvalidOperationException(Res.NoPermissionDelete);
-                    }
+                    var taiKhoan = nhanVien.TaiKhoan;
+                    db.NhanViens.Remove(nhanVien);
+                    
+                    if (taiKhoan != null)
+                        db.TaiKhoans.Remove(taiKhoan);
 
-                    bool hasHD = db.HoaDons.Any(x => x.MaNV == id);
-
-                    if (hasHD)
-                    {
-                        nv.TrangThai = Res.StatusQuit;
-                        if (nv.TaiKhoan != null) nv.TaiKhoan.TrangThai = false;
-                        db.SaveChanges();
-                        tx.Commit();
-                        throw new InvalidOperationException(Res.SoftDeleteEmployee);
-                    }
-
-                    foreach (var hd in db.HoaDons.Where(x => x.MaNV == id)) hd.MaNV = null;
-                    var tk = nv.TaiKhoan;
-                    db.NhanViens.Remove(nv);
-                    if (tk != null) db.TaiKhoans.Remove(tk);
                     db.SaveChanges();
                     tx.Commit();
                 }
-                catch (InvalidOperationException) { throw; }
-                catch (Exception ex)
+                catch
                 {
                     tx.Rollback();
-                    throw new Exception("Lỗi khi xóa nhân viên: " + DbConfig.GetInnerMsg(ex), ex);
+                    throw;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Xóa nhân viên (backward compatibility)
+        /// BLL nên sử dụng SoftDelete hoặc HardDelete
+        /// </summary>
+        public static void Delete(string maNV)
+        {
+            if (HasInvoices(maNV))
+            {
+                SoftDelete(maNV);
+                throw new InvalidOperationException(Res.SoftDeleteEmployee);
+            }
+            else
+            {
+                HardDelete(maNV);
             }
         }
     }

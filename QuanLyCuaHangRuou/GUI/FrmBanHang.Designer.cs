@@ -107,12 +107,12 @@
             this.tableHeader.Controls.Add(this.lblNVLabel, 2, 1);
             this.tableHeader.Controls.Add(this.lblNhanVien, 3, 1);
             this.tableHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableHeader.Location = new System.Drawing.Point(3, 23);
+            this.tableHeader.Location = new System.Drawing.Point(3, 19);
             this.tableHeader.Name = "tableHeader";
             this.tableHeader.RowCount = 2;
             this.tableHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableHeader.Size = new System.Drawing.Size(958, 64);
+            this.tableHeader.Size = new System.Drawing.Size(958, 68);
             this.tableHeader.TabIndex = 0;
             // 
             // lblMaHD
@@ -132,7 +132,7 @@
             this.txtMaHD.Location = new System.Drawing.Point(103, 3);
             this.txtMaHD.Name = "txtMaHD";
             this.txtMaHD.ReadOnly = true;
-            this.txtMaHD.Size = new System.Drawing.Size(373, 27);
+            this.txtMaHD.Size = new System.Drawing.Size(373, 23);
             this.txtMaHD.TabIndex = 1;
             // 
             // lblNgayHD
@@ -151,7 +151,7 @@
             this.dtpNgay.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpNgay.Location = new System.Drawing.Point(582, 3);
             this.dtpNgay.Name = "dtpNgay";
-            this.dtpNgay.Size = new System.Drawing.Size(373, 27);
+            this.dtpNgay.Size = new System.Drawing.Size(373, 23);
             this.dtpNgay.TabIndex = 3;
             // 
             // lblKH
@@ -170,7 +170,7 @@
             this.cboKhachHang.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboKhachHang.Location = new System.Drawing.Point(103, 38);
             this.cboKhachHang.Name = "cboKhachHang";
-            this.cboKhachHang.Size = new System.Drawing.Size(373, 28);
+            this.cboKhachHang.Size = new System.Drawing.Size(373, 23);
             this.cboKhachHang.TabIndex = 5;
             // 
             // lblNVLabel
@@ -222,12 +222,12 @@
             this.tableChon.Controls.Add(this.nudSoLuong, 5, 0);
             this.tableChon.Controls.Add(this.btnThemVaoGio, 5, 1);
             this.tableChon.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableChon.Location = new System.Drawing.Point(3, 23);
+            this.tableChon.Location = new System.Drawing.Point(3, 19);
             this.tableChon.Name = "tableChon";
             this.tableChon.RowCount = 2;
             this.tableChon.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableChon.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableChon.Size = new System.Drawing.Size(958, 64);
+            this.tableChon.Size = new System.Drawing.Size(958, 68);
             this.tableChon.TabIndex = 0;
             // 
             // lblDoUong
@@ -246,7 +246,7 @@
             this.cboDoUong.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboDoUong.Location = new System.Drawing.Point(83, 3);
             this.cboDoUong.Name = "cboDoUong";
-            this.cboDoUong.Size = new System.Drawing.Size(281, 28);
+            this.cboDoUong.Size = new System.Drawing.Size(281, 23);
             this.cboDoUong.TabIndex = 1;
             this.cboDoUong.SelectedIndexChanged += new System.EventHandler(this.cboDoUong_SelectedIndexChanged);
             // 
@@ -266,7 +266,7 @@
             this.txtDonGia.Location = new System.Drawing.Point(450, 3);
             this.txtDonGia.Name = "txtDonGia";
             this.txtDonGia.ReadOnly = true;
-            this.txtDonGia.Size = new System.Drawing.Size(173, 27);
+            this.txtDonGia.Size = new System.Drawing.Size(173, 23);
             this.txtDonGia.TabIndex = 3;
             this.txtDonGia.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -294,7 +294,7 @@
             0,
             0});
             this.nudSoLuong.Name = "nudSoLuong";
-            this.nudSoLuong.Size = new System.Drawing.Size(120, 27);
+            this.nudSoLuong.Size = new System.Drawing.Size(120, 23);
             this.nudSoLuong.TabIndex = 5;
             this.nudSoLuong.Value = new decimal(new int[] {
             1,
@@ -402,7 +402,7 @@
             this.lblTongTien.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblTongTien.Location = new System.Drawing.Point(10, 12);
             this.lblTongTien.Name = "lblTongTien";
-            this.lblTongTien.Size = new System.Drawing.Size(125, 28);
+            this.lblTongTien.Size = new System.Drawing.Size(99, 21);
             this.lblTongTien.TabIndex = 0;
             this.lblTongTien.Text = "TỔNG TIỀN:";
             // 
@@ -413,7 +413,7 @@
             this.lblTongTienValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(53)))), ((int)(((byte)(69)))));
             this.lblTongTienValue.Location = new System.Drawing.Point(100, 10);
             this.lblTongTienValue.Name = "lblTongTienValue";
-            this.lblTongTienValue.Size = new System.Drawing.Size(28, 32);
+            this.lblTongTienValue.Size = new System.Drawing.Size(23, 25);
             this.lblTongTienValue.TabIndex = 1;
             this.lblTongTienValue.Text = "0";
             // 
@@ -463,7 +463,7 @@
             // 
             // FrmBanHang
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 561);
             this.Controls.Add(this.splitContainer);

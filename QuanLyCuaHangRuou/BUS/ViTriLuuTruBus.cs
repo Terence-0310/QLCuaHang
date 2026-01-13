@@ -5,18 +5,20 @@ using QuanLyCuaHangRuou.DAL;
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho V? Trí L?u Tr?
+    /// Business Service cho V? Trí L?u Tr? (Facade cho GUI)
+    /// Ch? ??c d? li?u - không c?n BLL
     /// </summary>
     public static class ViTriLuuTruBus
     {
         /// <summary>
-        /// L?y t?t c? v? trí l?u tr? ?ang ho?t ??ng cho ComboBox
+        /// L?y danh sách v? trí l?u tr? cho ComboBox
         /// </summary>
         public static BusResult<List<ViTriLuuTruDal.ViTriGridRow>> GetAllForCombo()
         {
             try
             {
-                return BusResult<List<ViTriLuuTruDal.ViTriGridRow>>.Ok(ViTriLuuTruDal.GetAllForCombo());
+                var data = ViTriLuuTruDal.GetAllForCombo();
+                return BusResult<List<ViTriLuuTruDal.ViTriGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {

@@ -5,15 +5,20 @@ using QuanLyCuaHangRuou.DAL;
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Hóa ??n
+    /// Business Service cho Hóa ??n (Facade cho GUI)
+    /// Ch? ??c/tìm ki?m - không c?n BLL ph?c t?p
     /// </summary>
     public static class HoaDonBus
     {
+        /// <summary>
+        /// Tìm ki?m hóa ??n
+        /// </summary>
         public static BusResult<List<HoaDonDal.HoaDonGridRow>> Search(string keyword, DateTime? from = null, DateTime? to = null)
         {
             try
             {
-                return BusResult<List<HoaDonDal.HoaDonGridRow>>.Ok(HoaDonDal.Search(keyword, from, to));
+                var data = HoaDonDal.Search(keyword, from, to);
+                return BusResult<List<HoaDonDal.HoaDonGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {
@@ -21,6 +26,9 @@ namespace QuanLyCuaHangRuou.BUS
             }
         }
 
+        /// <summary>
+        /// L?y hóa ??n ?? in
+        /// </summary>
         public static BusResult<HoaDonDal.HoaDonPrintDto> GetForPrint(string maHD)
         {
             try

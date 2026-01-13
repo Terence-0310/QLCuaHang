@@ -80,6 +80,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BLL\AuthBll.cs" />
+    <Compile Include="BLL\BanHangBll.cs" />
+    <Compile Include="BLL\DoUongBll.cs" />
+    <Compile Include="BLL\KhachHangBll.cs" />
+    <Compile Include="BLL\KyGuiRuouBll.cs" />
+    <Compile Include="BLL\NhanVienBll.cs" />
+    <Compile Include="BLL\ReportBll.cs" />
     <Compile Include="BUS\AuthBus.cs" />
     <Compile Include="BUS\BanHangBus.cs" />
     <Compile Include="BUS\BusResult.cs" />
@@ -241,6 +248,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

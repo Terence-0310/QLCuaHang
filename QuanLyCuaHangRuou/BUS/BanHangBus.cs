@@ -1,76 +1,43 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using QuanLyCuaHangRuou.Common;
-using QuanLyCuaHangRuou.DAL;
+using QuanLyCuaHangRuou.BLL;
 
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Bán Hàng
+    /// Business Service cho Bán Hàng (Facade cho GUI)
     /// </summary>
     public static class BanHangBus
     {
-        public static BusResult ThanhToan(string maHD, DateTime ngay, string maKH, string maNV, string ghiChu, List<BanHangDal.GioHangItem> items)
+        /// <summary>
+        /// Thanh toán hóa ??n
+        /// </summary>
+        public static BusResult ThanhToan(string maHD, DateTime ngay, string maKH, string maNV, string ghiChu, List<DAL.BanHangDal.GioHangItem> items)
         {
-            try
-            {
-                if (!AppSession.CanSell)
-                    return BusResult.Fail("B?n không có quy?n th?c hi?n bán hàng!");
-
-                if (items == null || items.Count == 0)
-                    return BusResult.Fail(Res.CartEmpty);
-
-                // Ki?m tra t?n kho t?ng s?n ph?m
-                foreach (var item in items)
-                {
-                    var check = DoUongBus.CheckAvailableForSale(item.MaDoUong, item.SoLuong);
-                    if (!check.Success)
-                        return BusResult.Fail(check.Message);
-                }
-
-                BanHangDal.ThanhToan(maHD, ngay, maKH, maNV, ghiChu, items);
-                return BusResult.Ok(Res.PaymentSuccess);
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i thanh toán: " + ex.Message);
-            }
+            var (success, message) = BanHangBll.ProcessPayment(maHD, ngay, maKH, maNV, ghiChu, items);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
 
-        public static BusResult AddToCart(string maDoUong, int quantity, List<BanHangDal.GioHangItem> currentCart)
+        /// <summary>
+        /// Thêm s?n ph?m vào gi? hàng
+        /// </summary>
+        public static BusResult AddToCart(string maDoUong, int quantity, List<DAL.BanHangDal.GioHangItem> currentCart)
         {
-            try
-            {
-                if (quantity <= 0)
-                    return BusResult.Fail(Res.QtyMustBePositive);
-
-                var doUong = DoUongDal.GetById(maDoUong);
-                if (doUong == null)
-                    return BusResult.Fail("Không tìm th?y ?? u?ng!");
-
-                if (doUong.TrangThai == Res.StatusOutOfStock)
-                    return BusResult.Fail($"'{doUong.TenDoUong}' ?ã ng?ng kinh doanh!");
-
-                if (doUong.HanSuDung.HasValue && doUong.HanSuDung.Value < DateTime.Today)
-                    return BusResult.Fail($"'{doUong.TenDoUong}' ?ã h?t h?n!");
-
-                int existingQty = currentCart?.FirstOrDefault(x => x.MaDoUong == maDoUong)?.SoLuong ?? 0;
-                if (doUong.SoLuongTon < existingQty + quantity)
-                    return BusResult.Fail($"T?n kho không ??! Còn: {doUong.SoLuongTon}");
-
-                return BusResult.Ok();
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i: " + ex.Message);
-            }
+            var (success, message) = BanHangBll.AddToCart(maDoUong, quantity, currentCart);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
 
-        public static decimal CalculateTotal(List<BanHangDal.GioHangItem> items) =>
-            items?.Sum(x => x.DonGia * x.SoLuong) ?? 0;
+        /// <summary>
+        /// Tính t?ng ti?n gi? hàng
+        /// </summary>
+        public static decimal CalculateTotal(List<DAL.BanHangDal.GioHangItem> items) =>
+            BanHangBll.CalculateTotal(items);
 
+        /// <summary>
+        /// T?o mã hóa ??n m?i
+        /// </summary>
         public static string GenerateMaHD() =>
-            "HD" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            BanHangBll.GenerateInvoiceCode();
     }
 }

@@ -1,23 +1,25 @@
 using System;
 using System.Collections.Generic;
-using QuanLyCuaHangRuou.Common;
+using QuanLyCuaHangRuou.BLL;
 using QuanLyCuaHangRuou.DAL;
 
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Nhân Viên
+    /// Business Service cho Nhân Viên (Facade cho GUI)
+    /// Ch? chuy?n ti?p request t? GUI sang BLL
     /// </summary>
     public static class NhanVienBus
     {
+        /// <summary>
+        /// L?y t?t c? nhân viên
+        /// </summary>
         public static BusResult<List<NhanVienDal.NhanVienGridRow>> GetAll()
         {
             try
             {
-                if (!AppSession.CanViewEmployees)
-                    return BusResult<List<NhanVienDal.NhanVienGridRow>>.Fail(Res.NoPermissionEdit);
-
-                return BusResult<List<NhanVienDal.NhanVienGridRow>>.Ok(NhanVienDal.GetAllForGrid());
+                var data = NhanVienBll.GetAll();
+                return BusResult<List<NhanVienDal.NhanVienGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {
@@ -25,14 +27,15 @@ namespace QuanLyCuaHangRuou.BUS
             }
         }
 
+        /// <summary>
+        /// Tìm ki?m nhân viên
+        /// </summary>
         public static BusResult<List<NhanVienDal.NhanVienGridRow>> Search(string keyword)
         {
             try
             {
-                if (!AppSession.CanViewEmployees)
-                    return BusResult<List<NhanVienDal.NhanVienGridRow>>.Fail(Res.NoPermissionEdit);
-
-                return BusResult<List<NhanVienDal.NhanVienGridRow>>.Ok(NhanVienDal.SearchForGrid(keyword));
+                var data = NhanVienBll.Search(keyword);
+                return BusResult<List<NhanVienDal.NhanVienGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {
@@ -40,105 +43,40 @@ namespace QuanLyCuaHangRuou.BUS
             }
         }
 
+        /// <summary>
+        /// Thêm nhân viên m?i v?i tài kho?n
+        /// </summary>
         public static BusResult Add(NhanVien nv, string username, string password, string vaiTro)
         {
-            try
+            var tk = new TaiKhoan
             {
-                if (!AppSession.CanEditEmployees)
-                    return BusResult.Fail(Res.NoPermissionAdd);
+                MaTK = NhanVienBll.GenerateAccountCode(),
+                Username = username,
+                Password = password,
+                MaVaiTro = vaiTro,
+                TrangThai = true
+            };
 
-                var err = Validate(nv);
-                if (err != null) return BusResult.Fail(err);
-
-                if (NhanVienDal.ExistsMaNV(nv.MaNV))
-                    return BusResult.Fail(Res.CodeExists);
-
-                if (TaiKhoanDal.ExistsUsername(username))
-                    return BusResult.Fail("Tên ??ng nh?p ?ã t?n t?i!");
-
-                if (!AppSession.IsAdmin && (vaiTro == PermissionKeys.RoleAdmin || vaiTro == PermissionKeys.RoleManager))
-                    return BusResult.Fail(Res.CannotCreateAdmin);
-
-                Normalize(nv);
-                var tk = new TaiKhoan
-                {
-                    MaTK = TaiKhoanDal.GenerateMaTK(),
-                    Username = username?.Trim(),
-                    Password = password,
-                    MaVaiTro = vaiTro,
-                    TrangThai = true
-                };
-
-                NhanVienDal.AddWithAccount(nv, tk);
-                return BusResult.Ok(Res.AddSuccess);
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i thêm: " + ex.Message);
-            }
+            var (success, message) = NhanVienBll.AddEmployeeWithAccount(nv, tk);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
 
+        /// <summary>
+        /// C?p nh?t thông tin nhân viên
+        /// </summary>
         public static BusResult Update(string maNV, string tenNV, string sdt, string diaChi, string trangThai, string vaiTro, string maTK)
         {
-            try
-            {
-                if (!AppSession.CanEditEmployees)
-                    return BusResult.Fail(Res.NoPermissionEdit);
-
-                if (string.IsNullOrWhiteSpace(maNV)) return BusResult.Fail(Res.EnterCode);
-                if (string.IsNullOrWhiteSpace(tenNV)) return BusResult.Fail(Res.EnterName);
-
-                NhanVienDal.UpdateWithRoleAndStatus(maNV, tenNV.Trim(), sdt?.Trim(), diaChi?.Trim(), trangThai, vaiTro, maTK);
-                return BusResult.Ok(Res.UpdateSuccess);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BusResult.Fail(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i c?p nh?t: " + ex.Message);
-            }
+            var (success, message) = NhanVienBll.UpdateEmployee(maNV, tenNV, sdt, diaChi, trangThai, vaiTro, maTK);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
 
+        /// <summary>
+        /// Xóa nhân viên
+        /// </summary>
         public static BusResult Delete(string maNV)
         {
-            try
-            {
-                if (!AppSession.CanDeleteEmployees)
-                    return BusResult.Fail(Res.NoPermissionDelete);
-
-                if (string.IsNullOrWhiteSpace(maNV))
-                    return BusResult.Fail(Res.EnterCode);
-
-                NhanVienDal.Delete(maNV);
-                return BusResult.Ok(Res.DeleteSuccess);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BusResult.Ok(ex.Message); // Soft delete
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i xóa: " + ex.Message);
-            }
-        }
-
-        private static string Validate(NhanVien nv)
-        {
-            if (nv == null) return "D? li?u không h?p l?!";
-            if (string.IsNullOrWhiteSpace(nv.MaNV)) return Res.EnterCode;
-            if (string.IsNullOrWhiteSpace(nv.TenNV)) return Res.EnterName;
-            return null;
-        }
-
-        private static void Normalize(NhanVien nv)
-        {
-            nv.MaNV = nv.MaNV?.Trim();
-            nv.TenNV = nv.TenNV?.Trim();
-            nv.SoDienThoai = nv.SoDienThoai?.Trim();
-            nv.DiaChi = nv.DiaChi?.Trim();
-            if (string.IsNullOrWhiteSpace(nv.TrangThai)) nv.TrangThai = Res.StatusWorking;
+            var (success, message, isSoftDelete) = NhanVienBll.DeleteEmployee(maNV);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
     }
 }

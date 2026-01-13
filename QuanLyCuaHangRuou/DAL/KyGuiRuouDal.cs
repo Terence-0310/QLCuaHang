@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QuanLyCuaHangRuou.Common;
 
 namespace QuanLyCuaHangRuou.DAL
 {
     /// <summary>
-    /// Quản lý ký gửi rượu
+    /// Data Access Layer cho Ký Gửi Rượu
+    /// Chỉ CRUD đơn giản
     /// </summary>
     public static class KyGuiRuouDal
     {
@@ -25,79 +25,135 @@ namespace QuanLyCuaHangRuou.DAL
             public string HinhPath { get; set; }
         }
 
+        /// <summary>
+        /// Lấy tất cả ký gửi
+        /// </summary>
         public static List<KyGuiGridRow> GetAllForGrid() => DbConfig.Use(db =>
             db.KyGuiRuous.Select(x => new KyGuiGridRow
             {
-                MaKyGui = x.MaKyGui, MaKH = x.MaKH, TenKH = x.KhachHang.TenKH,
-                TenRuou = x.TenRuou, DungTichConLai = x.DungTichConLai, DonViTinh = x.DonViTinh,
-                NgayKyGui = x.NgayKyGui, HanKyGui = x.HanKyGui,
-                ViTriLuuTru = x.ViTriLuuTru, TrangThai = x.TrangThai, HinhPath = x.HinhPath
+                MaKyGui = x.MaKyGui,
+                MaKH = x.MaKH,
+                TenKH = x.KhachHang.TenKH,
+                TenRuou = x.TenRuou,
+                DungTichConLai = x.DungTichConLai,
+                DonViTinh = x.DonViTinh,
+                NgayKyGui = x.NgayKyGui,
+                HanKyGui = x.HanKyGui,
+                ViTriLuuTru = x.ViTriLuuTru,
+                TrangThai = x.TrangThai,
+                HinhPath = x.HinhPath
             }).ToList());
 
-        public static List<KyGuiGridRow> SearchForGrid(string kw) => DbConfig.Use(db =>
+        /// <summary>
+        /// Tìm kiếm
+        /// </summary>
+        public static List<KyGuiGridRow> SearchForGrid(string keyword) => DbConfig.Use(db =>
         {
-            kw = (kw ?? "").Trim();
-            var q = db.KyGuiRuous.AsQueryable();
-            if (kw.Length > 0)
-                q = q.Where(x => x.MaKyGui.Contains(kw) || x.TenRuou.Contains(kw) || 
-                    x.MaKH.Contains(kw) || x.KhachHang.TenKH.Contains(kw) || x.ViTriLuuTru.Contains(kw));
-            return q.Select(x => new KyGuiGridRow
+            keyword = (keyword ?? "").Trim();
+            var query = db.KyGuiRuous.AsQueryable();
+            
+            if (keyword.Length > 0)
             {
-                MaKyGui = x.MaKyGui, MaKH = x.MaKH, TenKH = x.KhachHang.TenKH,
-                TenRuou = x.TenRuou, DungTichConLai = x.DungTichConLai, DonViTinh = x.DonViTinh,
-                NgayKyGui = x.NgayKyGui, HanKyGui = x.HanKyGui,
-                ViTriLuuTru = x.ViTriLuuTru, TrangThai = x.TrangThai, HinhPath = x.HinhPath
+                query = query.Where(x => 
+                    x.MaKyGui.Contains(keyword) || 
+                    x.TenRuou.Contains(keyword) || 
+                    x.MaKH.Contains(keyword) || 
+                    x.KhachHang.TenKH.Contains(keyword) || 
+                    x.ViTriLuuTru.Contains(keyword));
+            }
+            
+            return query.Select(x => new KyGuiGridRow
+            {
+                MaKyGui = x.MaKyGui,
+                MaKH = x.MaKH,
+                TenKH = x.KhachHang.TenKH,
+                TenRuou = x.TenRuou,
+                DungTichConLai = x.DungTichConLai,
+                DonViTinh = x.DonViTinh,
+                NgayKyGui = x.NgayKyGui,
+                HanKyGui = x.HanKyGui,
+                ViTriLuuTru = x.ViTriLuuTru,
+                TrangThai = x.TrangThai,
+                HinhPath = x.HinhPath
             }).ToList();
         });
 
-        public static KyGuiRuou GetById(string id) =>
-            string.IsNullOrWhiteSpace(id) ? null : DbConfig.Use(db => db.KyGuiRuous.FirstOrDefault(x => x.MaKyGui == id));
-
-        public static void Add(KyGuiRuou e)
+        /// <summary>
+        /// Lấy theo mã
+        /// </summary>
+        public static KyGuiRuou GetById(string maKyGui)
         {
-            if (e == null || string.IsNullOrWhiteSpace(e.MaKyGui) || string.IsNullOrWhiteSpace(e.TenRuou))
-                throw new ArgumentException("Thông tin ký gửi không hợp lệ");
+            if (string.IsNullOrWhiteSpace(maKyGui))
+                return null;
+
+            return DbConfig.Use(db => 
+                db.KyGuiRuous.FirstOrDefault(x => x.MaKyGui == maKyGui));
+        }
+
+        /// <summary>
+        /// Thêm mới
+        /// </summary>
+        public static void Add(KyGuiRuou entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
 
             DbConfig.Use(db =>
             {
-                if (string.IsNullOrWhiteSpace(e.DonViTinh)) e.DonViTinh = "ml";
-                if (string.IsNullOrWhiteSpace(e.TrangThai)) e.TrangThai = Res.StatusConsigning;
-                db.KyGuiRuous.Add(e);
+                db.KyGuiRuous.Add(entity);
                 db.SaveChanges();
             });
         }
 
-        public static void Update(KyGuiRuou e)
+        /// <summary>
+        /// Cập nhật
+        /// </summary>
+        public static void Update(KyGuiRuou entity)
         {
-            if (e == null || string.IsNullOrWhiteSpace(e.MaKyGui))
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            DbConfig.Use(db =>
+            {
+                var existing = db.KyGuiRuous.FirstOrDefault(x => x.MaKyGui == entity.MaKyGui);
+                if (existing == null)
+                    throw new InvalidOperationException("Không tìm thấy ký gửi");
+
+                existing.TenRuou = entity.TenRuou;
+                existing.DungTichConLai = entity.DungTichConLai;
+                existing.DonViTinh = entity.DonViTinh;
+                existing.HanKyGui = entity.HanKyGui;
+                existing.ViTriLuuTru = entity.ViTriLuuTru;
+                existing.TrangThai = entity.TrangThai;
+                existing.HinhPath = entity.HinhPath;
+
+                db.SaveChanges();
+            });
+        }
+
+        /// <summary>
+        /// Xóa
+        /// </summary>
+        public static void Delete(string maKyGui)
+        {
+            if (string.IsNullOrWhiteSpace(maKyGui))
                 throw new ArgumentException("Mã ký gửi không hợp lệ");
 
             DbConfig.Use(db =>
             {
-                var ex = db.KyGuiRuous.FirstOrDefault(x => x.MaKyGui == e.MaKyGui)
-                    ?? throw new InvalidOperationException("Không tìm thấy ký gửi");
-                ex.TenRuou = e.TenRuou;
-                ex.DungTichConLai = e.DungTichConLai;
-                ex.HanKyGui = e.HanKyGui;
-                ex.ViTriLuuTru = e.ViTriLuuTru;
-                ex.TrangThai = e.TrangThai;
+                var entity = db.KyGuiRuous.FirstOrDefault(x => x.MaKyGui == maKyGui);
+                if (entity == null)
+                    throw new InvalidOperationException("Không tìm thấy ký gửi");
+
+                db.KyGuiRuous.Remove(entity);
                 db.SaveChanges();
             });
         }
 
-        public static void Delete(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Mã ký gửi không hợp lệ");
-
-            DbConfig.Use(db =>
-            {
-                var e = db.KyGuiRuous.FirstOrDefault(x => x.MaKyGui == id)
-                    ?? throw new InvalidOperationException("Không tìm thấy ký gửi");
-                db.KyGuiRuous.Remove(e);
-                db.SaveChanges();
-            });
-        }
-
+        /// <summary>
+        /// Sinh mã ký gửi - chỉ để đây cho backward compatibility
+        /// BLL sẽ dùng GenerateCode()
+        /// </summary>
         public static string GenerateMaKyGui() => "KG" + DateTime.Now.ToString("yyyyMMddHHmmss");
     }
 }

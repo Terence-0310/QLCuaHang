@@ -13,5 +13,11 @@ namespace QuanLyCuaHangRuou.DAL
 
         public static LoaiDoUong GetById(string id) =>
             DbConfig.Use(db => db.LoaiDoUongs.FirstOrDefault(x => x.MaLoai == id));
+
+        /// <summary>
+        /// Lấy mã loại mặc định
+        /// </summary>
+        public static string GetDefaultCategoryCode() =>
+            DbConfig.Use(db => db.LoaiDoUongs.Select(x => x.MaLoai).FirstOrDefault()) ?? "LOAI01";
     }
 }

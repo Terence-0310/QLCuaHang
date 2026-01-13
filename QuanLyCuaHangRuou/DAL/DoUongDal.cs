@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QuanLyCuaHangRuou.Common;
 
 namespace QuanLyCuaHangRuou.DAL
 {
+    /// <summary>
+    /// Data Access Layer cho Đồ Uống
+    /// Chỉ chứa CRUD đơn giản
+    /// </summary>
     public static class DoUongDal
     {
         public sealed class DoUongGridRow
@@ -23,113 +26,210 @@ namespace QuanLyCuaHangRuou.DAL
             public string MaLoai { get; set; }
         }
 
+        /// <summary>
+        /// Lấy tất cả đồ uống
+        /// </summary>
         public static List<DoUongGridRow> GetAllForGrid() => DbConfig.Use(db =>
             db.DoUongs.Select(x => new DoUongGridRow
             {
-                MaDoUong = x.MaDoUong, TenDoUong = x.TenDoUong, DonGia = x.DonGia,
-                SoLuongTon = x.SoLuongTon, DonViTinh = x.DonViTinh,
-                DungTich = x.DungTich, HanSuDung = x.HanSuDung,
-                GhiChu = x.GhiChu, TrangThai = x.TrangThai, HinhPath = x.HinhPath,
-                TenLoai = x.LoaiDoUong.TenLoai, MaLoai = x.MaLoai
+                MaDoUong = x.MaDoUong,
+                TenDoUong = x.TenDoUong,
+                DonGia = x.DonGia,
+                SoLuongTon = x.SoLuongTon,
+                DonViTinh = x.DonViTinh,
+                DungTich = x.DungTich,
+                HanSuDung = x.HanSuDung,
+                GhiChu = x.GhiChu,
+                TrangThai = x.TrangThai,
+                HinhPath = x.HinhPath,
+                TenLoai = x.LoaiDoUong.TenLoai,
+                MaLoai = x.MaLoai
             }).ToList());
 
-        public static List<DoUongGridRow> SearchForGrid(string kw) => DbConfig.Use(db =>
+        /// <summary>
+        /// Tìm kiếm đồ uống
+        /// </summary>
+        public static List<DoUongGridRow> SearchForGrid(string keyword) => DbConfig.Use(db =>
         {
-            kw = (kw ?? "").Trim();
-            var q = db.DoUongs.AsQueryable();
-            if (kw.Length > 0)
-                q = q.Where(x => x.MaDoUong.Contains(kw) || x.TenDoUong.Contains(kw));
-            return q.Select(x => new DoUongGridRow
+            keyword = (keyword ?? "").Trim();
+            var query = db.DoUongs.AsQueryable();
+            
+            if (keyword.Length > 0)
             {
-                MaDoUong = x.MaDoUong, TenDoUong = x.TenDoUong, DonGia = x.DonGia,
-                SoLuongTon = x.SoLuongTon, DonViTinh = x.DonViTinh,
-                DungTich = x.DungTich, HanSuDung = x.HanSuDung,
-                GhiChu = x.GhiChu, TrangThai = x.TrangThai, HinhPath = x.HinhPath,
-                TenLoai = x.LoaiDoUong.TenLoai, MaLoai = x.MaLoai
+                query = query.Where(x => 
+                    x.MaDoUong.Contains(keyword) || 
+                    x.TenDoUong.Contains(keyword));
+            }
+            
+            return query.Select(x => new DoUongGridRow
+            {
+                MaDoUong = x.MaDoUong,
+                TenDoUong = x.TenDoUong,
+                DonGia = x.DonGia,
+                SoLuongTon = x.SoLuongTon,
+                DonViTinh = x.DonViTinh,
+                DungTich = x.DungTich,
+                HanSuDung = x.HanSuDung,
+                GhiChu = x.GhiChu,
+                TrangThai = x.TrangThai,
+                HinhPath = x.HinhPath,
+                TenLoai = x.LoaiDoUong.TenLoai,
+                MaLoai = x.MaLoai
             }).ToList();
         });
 
-        public static DoUong GetById(string id) =>
-            string.IsNullOrWhiteSpace(id) ? null : DbConfig.Use(db => db.DoUongs.FirstOrDefault(x => x.MaDoUong == id));
-
-        public static void Add(DoUong e)
+        /// <summary>
+        /// Lấy đồ uống theo mã
+        /// </summary>
+        public static DoUong GetById(string maDoUong)
         {
-            if (e == null || string.IsNullOrWhiteSpace(e.MaDoUong) || string.IsNullOrWhiteSpace(e.TenDoUong))
-                throw new ArgumentException("Mã và tên đồ uống không hợp lệ");
+            if (string.IsNullOrWhiteSpace(maDoUong))
+                return null;
+
+            return DbConfig.Use(db => 
+                db.DoUongs.FirstOrDefault(x => x.MaDoUong == maDoUong));
+        }
+
+        /// <summary>
+        /// Kiểm tra mối quan hệ
+        /// </summary>
+        public static (bool hasRelations, bool hasInvoiceDetails, bool hasConsignments) GetRelationships(string maDoUong)
+        {
+            if (string.IsNullOrWhiteSpace(maDoUong))
+                return (false, false, false);
+
+            return DbConfig.Use(db =>
+            {
+                bool hasCT = db.ChiTietHoaDons.Any(x => x.MaDoUong == maDoUong);
+                bool hasKG = db.KyGuiRuous.Any(x => x.MaDoUong == maDoUong);
+                return (hasCT || hasKG, hasCT, hasKG);
+            });
+        }
+
+        /// <summary>
+        /// Thêm đồ uống mới
+        /// </summary>
+        public static void Add(DoUong entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
 
             DbConfig.Use(db =>
             {
-                if (string.IsNullOrWhiteSpace(e.MaLoai))
-                    e.MaLoai = db.LoaiDoUongs.Select(x => x.MaLoai).FirstOrDefault() ?? "LOAI01";
-                if (string.IsNullOrWhiteSpace(e.DonViTinh)) e.DonViTinh = "Chai";
-                if (string.IsNullOrWhiteSpace(e.TrangThai)) e.TrangThai = Res.StatusInStock;
-                db.DoUongs.Add(e);
+                db.DoUongs.Add(entity);
                 db.SaveChanges();
             });
         }
 
-        public static void Update(DoUong e)
+        /// <summary>
+        /// Cập nhật đồ uống
+        /// </summary>
+        public static void Update(DoUong entity)
         {
-            if (e == null || string.IsNullOrWhiteSpace(e.MaDoUong))
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity));
+
+            DbConfig.Use(db =>
+            {
+                var existing = db.DoUongs.FirstOrDefault(x => x.MaDoUong == entity.MaDoUong);
+                if (existing == null)
+                    throw new InvalidOperationException("Không tìm thấy đồ uống");
+
+                existing.TenDoUong = entity.TenDoUong;
+                existing.DonGia = entity.DonGia;
+                existing.SoLuongTon = entity.SoLuongTon;
+                existing.DonViTinh = entity.DonViTinh;
+                existing.DungTich = entity.DungTich;
+                existing.HanSuDung = entity.HanSuDung;
+                existing.GhiChu = entity.GhiChu;
+                existing.TrangThai = entity.TrangThai;
+                existing.HinhPath = entity.HinhPath;
+                existing.MaLoai = entity.MaLoai;
+
+                db.SaveChanges();
+            });
+        }
+
+        /// <summary>
+        /// Cập nhật số lượng tồn kho
+        /// </summary>
+        public static void UpdateQuantity(string maDoUong, int quantityChange)
+        {
+            if (string.IsNullOrWhiteSpace(maDoUong))
                 throw new ArgumentException("Mã đồ uống không hợp lệ");
 
             DbConfig.Use(db =>
             {
-                var ex = db.DoUongs.FirstOrDefault(x => x.MaDoUong == e.MaDoUong)
-                    ?? throw new InvalidOperationException("Không tìm thấy đồ uống");
-                ex.TenDoUong = e.TenDoUong;
-                ex.DonGia = e.DonGia;
-                ex.SoLuongTon = e.SoLuongTon;
-                ex.DungTich = e.DungTich;
-                ex.HanSuDung = e.HanSuDung;
-                ex.GhiChu = e.GhiChu;
-                ex.HinhPath = e.HinhPath;
+                var entity = db.DoUongs.FirstOrDefault(x => x.MaDoUong == maDoUong);
+                if (entity == null)
+                    throw new InvalidOperationException("Không tìm thấy đồ uống");
+
+                entity.SoLuongTon += quantityChange;
+
+                if (entity.SoLuongTon < 0)
+                    throw new InvalidOperationException("Số lượng tồn không được âm");
+
                 db.SaveChanges();
             });
         }
 
-        public static void Delete(string id)
+        /// <summary>
+        /// Xóa mềm
+        /// </summary>
+        public static void SoftDelete(string maDoUong)
         {
-            if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Mã đồ uống không hợp lệ");
+            if (string.IsNullOrWhiteSpace(maDoUong))
+                throw new ArgumentException("Mã đồ uống không hợp lệ");
+
+            DbConfig.Use(db =>
+            {
+                var entity = db.DoUongs.FirstOrDefault(x => x.MaDoUong == maDoUong);
+                if (entity == null)
+                    throw new InvalidOperationException("Không tìm thấy đồ uống");
+
+                entity.TrangThai = Common.Res.StatusOutOfStock;
+                db.SaveChanges();
+            });
+        }
+
+        /// <summary>
+        /// Xóa cứng
+        /// </summary>
+        public static void HardDelete(string maDoUong)
+        {
+            if (string.IsNullOrWhiteSpace(maDoUong))
+                throw new ArgumentException("Mã đồ uống không hợp lệ");
 
             using (var db = DbConfig.Create())
-            using (var tx = db.Database.BeginTransaction())
+            using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
-                    var e = db.DoUongs.FirstOrDefault(x => x.MaDoUong == id)
-                        ?? throw new InvalidOperationException("Không tìm thấy đồ uống");
+                    var entity = db.DoUongs.FirstOrDefault(x => x.MaDoUong == maDoUong);
+                    if (entity == null)
+                        throw new InvalidOperationException("Không tìm thấy đồ uống");
 
-                    bool hasCT = db.ChiTietHoaDons.Any(x => x.MaDoUong == id);
-                    bool hasKG = db.KyGuiRuous.Any(x => x.MaDoUong == id);
+                    // Xóa chi tiết hóa đơn
+                    var chiTietList = db.ChiTietHoaDons.Where(x => x.MaDoUong == maDoUong).ToList();
+                    db.ChiTietHoaDons.RemoveRange(chiTietList);
 
-                    if (AppSession.IsAdmin)
+                    // Gỡ liên kết ký gửi
+                    var kyGuiList = db.KyGuiRuous.Where(x => x.MaDoUong == maDoUong).ToList();
+                    foreach (var kg in kyGuiList)
                     {
-                        db.ChiTietHoaDons.RemoveRange(db.ChiTietHoaDons.Where(x => x.MaDoUong == id));
-                        foreach (var kg in db.KyGuiRuous.Where(x => x.MaDoUong == id)) kg.MaDoUong = null;
-                        db.DoUongs.Remove(e);
+                        kg.MaDoUong = null;
                     }
-                    else if (hasCT || hasKG)
-                    {
-                        e.TrangThai = Res.StatusOutOfStock;
-                        db.SaveChanges();
-                        tx.Commit();
-                        var reason = (hasCT ? Res.RelatedInvoice : "") + (hasKG ? (hasCT ? ", " : "") + Res.RelatedConsignment : "");
-                        throw new InvalidOperationException(Res.SoftDeleteDrink(reason));
-                    }
-                    else
-                    {
-                        db.DoUongs.Remove(e);
-                    }
+
+                    // Xóa đồ uống
+                    db.DoUongs.Remove(entity);
 
                     db.SaveChanges();
-                    tx.Commit();
+                    transaction.Commit();
                 }
-                catch (InvalidOperationException) { throw; }
-                catch (Exception ex)
+                catch
                 {
-                    tx.Rollback();
-                    throw new Exception("Lỗi khi xóa đồ uống: " + DbConfig.GetInnerMsg(ex), ex);
+                    transaction.Rollback();
+                    throw;
                 }
             }
         }

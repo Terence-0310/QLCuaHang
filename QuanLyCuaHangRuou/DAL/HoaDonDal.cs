@@ -46,6 +46,18 @@ namespace QuanLyCuaHangRuou.DAL
         }
 
         /// <summary>
+        /// Lấy hóa đơn theo mã
+        /// </summary>
+        public static HoaDon GetById(string maHD)
+        {
+            if (string.IsNullOrWhiteSpace(maHD))
+                return null;
+
+            return DbConfig.Use(db => 
+                db.HoaDons.FirstOrDefault(x => x.MaHD == maHD));
+        }
+
+        /// <summary>
         /// Lấy tất cả hóa đơn
         /// </summary>
         public static List<HoaDonGridRow> GetAll() => DbConfig.Use(db =>
@@ -171,5 +183,54 @@ namespace QuanLyCuaHangRuou.DAL
                 }).OrderBy(x => x.STT).ToList()
             };
         });
+
+        /// <summary>
+        /// Lấy top sản phẩm bán chạy
+        /// </summary>
+        public static List<(string MaDoUong, string TenDoUong, int SoLuongBan)> GetTopSellingProducts(int top = 10)
+        {
+            return DbConfig.Use(db =>
+            {
+                var result = db.ChiTietHoaDons
+                    .GroupBy(x => x.MaDoUong)
+                    .Select(g => new
+                    {
+                        MaDoUong = g.Key,
+                        SoLuongBan = g.Sum(x => x.SoLuong)
+                    })
+                    .OrderByDescending(x => x.SoLuongBan)
+                    .Take(top)
+                    .ToList();
+
+                var maDuList = result.Select(x => x.MaDoUong).ToList();
+                var doUongMap = db.DoUongs
+                    .Where(x => maDuList.Contains(x.MaDoUong))
+                    .ToDictionary(x => x.MaDoUong, x => x.TenDoUong);
+
+                return result
+                    .Select(x => (
+                        x.MaDoUong,
+                        doUongMap.ContainsKey(x.MaDoUong) ? doUongMap[x.MaDoUong] : x.MaDoUong,
+                        x.SoLuongBan
+                    ))
+                    .ToList();
+            });
+        }
+
+        /// <summary>
+        /// Lấy tổng doanh thu theo khoảng thời gian
+        /// </summary>
+        public static decimal GetTotalRevenue(DateTime fromDate, DateTime toDate)
+        {
+            return DbConfig.Use(db =>
+            {
+                fromDate = fromDate.Date;
+                toDate = toDate.Date.AddDays(1);
+
+                return db.HoaDons
+                    .Where(x => x.NgayHoaDon >= fromDate && x.NgayHoaDon < toDate)
+                    .Sum(x => (decimal?)x.TongTien) ?? 0;
+            });
+        }
     }
 }

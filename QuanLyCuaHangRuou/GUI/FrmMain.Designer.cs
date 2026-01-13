@@ -69,13 +69,14 @@
             this.mnuHeThong.Name = "mnuHeThong";
             this.mnuHeThong.Size = new System.Drawing.Size(116, 27);
             this.mnuHeThong.Text = "Hệ thống";
+            this.mnuHeThong.Click += new System.EventHandler(this.mnuHeThong_Click);
             // 
             // mnuDangNhap
             // 
             this.mnuDangNhap.Image = ((System.Drawing.Image)(resources.GetObject("mnuDangNhap.Image")));
             this.mnuDangNhap.Name = "mnuDangNhap";
             this.mnuDangNhap.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-            this.mnuDangNhap.Size = new System.Drawing.Size(250, 28);
+            this.mnuDangNhap.Size = new System.Drawing.Size(236, 28);
             this.mnuDangNhap.Text = "Đăng nhập";
             this.mnuDangNhap.Click += new System.EventHandler(this.mnuDangNhap_Click);
             // 
@@ -83,7 +84,7 @@
             // 
             this.mnuDangXuat.Image = ((System.Drawing.Image)(resources.GetObject("mnuDangXuat.Image")));
             this.mnuDangXuat.Name = "mnuDangXuat";
-            this.mnuDangXuat.Size = new System.Drawing.Size(250, 28);
+            this.mnuDangXuat.Size = new System.Drawing.Size(236, 28);
             this.mnuDangXuat.Text = "Đăng xuất";
             this.mnuDangXuat.Click += new System.EventHandler(this.mnuDangXuat_Click);
             // 
@@ -91,20 +92,20 @@
             // 
             this.mnuNhanVien.Image = ((System.Drawing.Image)(resources.GetObject("mnuNhanVien.Image")));
             this.mnuNhanVien.Name = "mnuNhanVien";
-            this.mnuNhanVien.Size = new System.Drawing.Size(250, 28);
+            this.mnuNhanVien.Size = new System.Drawing.Size(236, 28);
             this.mnuNhanVien.Text = "Quản lý nhân viên";
             this.mnuNhanVien.Click += new System.EventHandler(this.mnuNhanVien_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(247, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(233, 6);
             // 
             // mnuThoat
             // 
             this.mnuThoat.Name = "mnuThoat";
             this.mnuThoat.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.mnuThoat.Size = new System.Drawing.Size(250, 28);
+            this.mnuThoat.Size = new System.Drawing.Size(236, 28);
             this.mnuThoat.Text = "Thoát";
             this.mnuThoat.Click += new System.EventHandler(this.mnuThoat_Click);
             // 
@@ -123,7 +124,7 @@
             this.mnuDoUong.Image = ((System.Drawing.Image)(resources.GetObject("mnuDoUong.Image")));
             this.mnuDoUong.Name = "mnuDoUong";
             this.mnuDoUong.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.mnuDoUong.Size = new System.Drawing.Size(224, 28);
+            this.mnuDoUong.Size = new System.Drawing.Size(212, 28);
             this.mnuDoUong.Text = "Đồ uống";
             this.mnuDoUong.Click += new System.EventHandler(this.mnuDoUong_Click);
             // 
@@ -132,7 +133,7 @@
             this.mnuKhachHang.Image = ((System.Drawing.Image)(resources.GetObject("mnuKhachHang.Image")));
             this.mnuKhachHang.Name = "mnuKhachHang";
             this.mnuKhachHang.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.mnuKhachHang.Size = new System.Drawing.Size(224, 28);
+            this.mnuKhachHang.Size = new System.Drawing.Size(212, 28);
             this.mnuKhachHang.Text = "Khách hàng";
             this.mnuKhachHang.Click += new System.EventHandler(this.mnuKhachHang_Click);
             // 
@@ -153,29 +154,30 @@
             this.mnuBanHang.Image = ((System.Drawing.Image)(resources.GetObject("mnuBanHang.Image")));
             this.mnuBanHang.Name = "mnuBanHang";
             this.mnuBanHang.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.mnuBanHang.Size = new System.Drawing.Size(250, 28);
+            this.mnuBanHang.Size = new System.Drawing.Size(242, 28);
             this.mnuBanHang.Text = "Bán hàng";
             this.mnuBanHang.Click += new System.EventHandler(this.mnuBanHang_Click);
             // 
             // mnuLichSuHoaDon
             // 
+            this.mnuLichSuHoaDon.Image = ((System.Drawing.Image)(resources.GetObject("mnuLichSuHoaDon.Image")));
             this.mnuLichSuHoaDon.Name = "mnuLichSuHoaDon";
             this.mnuLichSuHoaDon.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.mnuLichSuHoaDon.Size = new System.Drawing.Size(250, 28);
+            this.mnuLichSuHoaDon.Size = new System.Drawing.Size(242, 28);
             this.mnuLichSuHoaDon.Text = "Lịch sử hóa đơn";
             this.mnuLichSuHoaDon.Click += new System.EventHandler(this.mnuLichSuHoaDon_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(247, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(239, 6);
             // 
             // mnuKyGuiRuou
             // 
             this.mnuKyGuiRuou.Image = ((System.Drawing.Image)(resources.GetObject("mnuKyGuiRuou.Image")));
             this.mnuKyGuiRuou.Name = "mnuKyGuiRuou";
             this.mnuKyGuiRuou.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.mnuKyGuiRuou.Size = new System.Drawing.Size(250, 28);
+            this.mnuKyGuiRuou.Size = new System.Drawing.Size(242, 28);
             this.mnuKyGuiRuou.Text = "Ký gửi rượu";
             this.mnuKyGuiRuou.Click += new System.EventHandler(this.mnuKyGuiRuou_Click);
             // 
@@ -194,7 +196,7 @@
             this.mnuBaoCaoDoanhThu.Image = ((System.Drawing.Image)(resources.GetObject("mnuBaoCaoDoanhThu.Image")));
             this.mnuBaoCaoDoanhThu.Name = "mnuBaoCaoDoanhThu";
             this.mnuBaoCaoDoanhThu.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.mnuBaoCaoDoanhThu.Size = new System.Drawing.Size(224, 28);
+            this.mnuBaoCaoDoanhThu.Size = new System.Drawing.Size(203, 28);
             this.mnuBaoCaoDoanhThu.Text = "Doanh thu";
             this.mnuBaoCaoDoanhThu.Click += new System.EventHandler(this.mnuBaoCaoDoanhThu_Click);
             // 
@@ -203,7 +205,7 @@
             this.mnuBaoCaoTonKho.Image = ((System.Drawing.Image)(resources.GetObject("mnuBaoCaoTonKho.Image")));
             this.mnuBaoCaoTonKho.Name = "mnuBaoCaoTonKho";
             this.mnuBaoCaoTonKho.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.mnuBaoCaoTonKho.Size = new System.Drawing.Size(224, 28);
+            this.mnuBaoCaoTonKho.Size = new System.Drawing.Size(203, 28);
             this.mnuBaoCaoTonKho.Text = "Tồn kho";
             this.mnuBaoCaoTonKho.Click += new System.EventHandler(this.mnuBaoCaoTonKho_Click);
             // 

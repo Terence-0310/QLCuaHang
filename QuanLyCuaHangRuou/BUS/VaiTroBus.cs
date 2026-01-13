@@ -5,15 +5,20 @@ using QuanLyCuaHangRuou.DAL;
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Vai Trò
+    /// Business Service cho Vai Trò (Facade cho GUI)
+    /// Ch? ??c d? li?u - không c?n BLL
     /// </summary>
     public static class VaiTroBus
     {
+        /// <summary>
+        /// L?y t?t c? vai trò
+        /// </summary>
         public static BusResult<List<VaiTro>> GetAll()
         {
             try
             {
-                return BusResult<List<VaiTro>>.Ok(VaiTroDal.GetAll());
+                var data = VaiTroDal.GetAll();
+                return BusResult<List<VaiTro>>.Ok(data);
             }
             catch (Exception ex)
             {

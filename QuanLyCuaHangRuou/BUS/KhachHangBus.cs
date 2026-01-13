@@ -1,120 +1,89 @@
 using System;
 using System.Collections.Generic;
 using QuanLyCuaHangRuou.Common;
-using QuanLyCuaHangRuou.DAL;
+using QuanLyCuaHangRuou.BLL;
 
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Khách Hàng
+    /// Business Service cho Khách Hàng (Facade cho GUI)
+    /// Chuy?n ti?p các request t? GUI sang BLL
     /// </summary>
     public static class KhachHangBus
     {
-        public static BusResult<List<KhachHangDal.KhachHangGridRow>> GetAll()
+        /// <summary>
+        /// L?y t?t c? khách hàng
+        /// </summary>
+        public static BusResult<List<DAL.KhachHangDal.KhachHangGridRow>> GetAll()
         {
             try
             {
-                return BusResult<List<KhachHangDal.KhachHangGridRow>>.Ok(KhachHangDal.GetAllForGrid());
+                var data = DAL.KhachHangDal.GetAllForGrid();
+                return BusResult<List<DAL.KhachHangDal.KhachHangGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {
-                return BusResult<List<KhachHangDal.KhachHangGridRow>>.Fail("L?i t?i d? li?u: " + ex.Message);
+                return BusResult<List<DAL.KhachHangDal.KhachHangGridRow>>.Fail("L?i t?i d? li?u: " + ex.Message);
             }
         }
 
-        public static BusResult<List<KhachHangDal.KhachHangGridRow>> Search(string keyword)
+        /// <summary>
+        /// Tìm ki?m khách hàng
+        /// </summary>
+        public static BusResult<List<DAL.KhachHangDal.KhachHangGridRow>> Search(string keyword)
         {
             try
             {
-                return BusResult<List<KhachHangDal.KhachHangGridRow>>.Ok(KhachHangDal.SearchForGrid(keyword));
+                var data = KhachHangBll.Search(keyword);
+                return BusResult<List<DAL.KhachHangDal.KhachHangGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {
-                return BusResult<List<KhachHangDal.KhachHangGridRow>>.Fail("L?i tìm ki?m: " + ex.Message);
+                return BusResult<List<DAL.KhachHangDal.KhachHangGridRow>>.Fail("L?i tìm ki?m: " + ex.Message);
             }
         }
 
+        /// <summary>
+        /// Thêm khách hàng m?i
+        /// </summary>
         public static BusResult Add(KhachHang entity)
         {
-            try
-            {
-                if (!AppSession.CanEditCatalog)
-                    return BusResult.Fail(Res.NoPermissionAdd);
-
-                var err = Validate(entity);
-                if (err != null) return BusResult.Fail(err);
-
-                if (KhachHangDal.GetById(entity.MaKH) != null)
-                    return BusResult.Fail(Res.CodeExists);
-
-                Normalize(entity);
-                KhachHangDal.Add(entity);
-                return BusResult.Ok(Res.AddSuccess);
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i thêm: " + ex.Message);
-            }
+            var (success, message) = KhachHangBll.Add(entity);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
 
+        /// <summary>
+        /// C?p nh?t khách hàng
+        /// </summary>
         public static BusResult Update(KhachHang entity)
         {
-            try
-            {
-                if (!AppSession.CanEditCatalog)
-                    return BusResult.Fail(Res.NoPermissionEdit);
-
-                var err = Validate(entity);
-                if (err != null) return BusResult.Fail(err);
-
-                Normalize(entity);
-                KhachHangDal.Update(entity);
-                return BusResult.Ok(Res.UpdateSuccess);
-            }
-            catch (Exception ex)
-            {
-                return BusResult.Fail("L?i c?p nh?t: " + ex.Message);
-            }
+            var (success, message) = KhachHangBll.Update(entity);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
         }
 
+        /// <summary>
+        /// Xóa khách hàng
+        /// </summary>
         public static BusResult Delete(string maKH)
         {
+            var (success, message, isSoftDelete) = KhachHangBll.Delete(maKH);
+            return success ? BusResult.Ok(message) : BusResult.Fail(message);
+        }
+
+        /// <summary>
+        /// L?y danh sách khách hàng ?ang ho?t ??ng
+        /// </summary>
+        public static BusResult<List<DAL.KhachHangDal.KhachHangGridRow>> GetActiveCustomers()
+        {
             try
             {
-                if (!AppSession.CanDeleteCustomer)
-                    return BusResult.Fail(Res.NoPermissionDelete);
-
-                if (string.IsNullOrWhiteSpace(maKH))
-                    return BusResult.Fail(Res.EnterCode);
-
-                KhachHangDal.Delete(maKH);
-                return BusResult.Ok(Res.DeleteSuccess);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BusResult.Ok(ex.Message); // Soft delete
+                var data = KhachHangBll.GetActiveCustomers();
+                return BusResult<List<DAL.KhachHangDal.KhachHangGridRow>>.Ok(data);
             }
             catch (Exception ex)
             {
-                return BusResult.Fail("L?i xóa: " + ex.Message);
+                return BusResult<List<DAL.KhachHangDal.KhachHangGridRow>>.Fail("L?i: " + ex.Message);
             }
-        }
-
-        private static string Validate(KhachHang e)
-        {
-            if (e == null) return "D? li?u không h?p l?!";
-            if (string.IsNullOrWhiteSpace(e.MaKH)) return Res.EnterCode;
-            if (string.IsNullOrWhiteSpace(e.TenKH)) return Res.EnterName;
-            return null;
-        }
-
-        private static void Normalize(KhachHang e)
-        {
-            e.MaKH = e.MaKH?.Trim();
-            e.TenKH = e.TenKH?.Trim();
-            e.SoDienThoai = e.SoDienThoai?.Trim();
-            e.DiaChi = e.DiaChi?.Trim();
-            if (string.IsNullOrWhiteSpace(e.TrangThai)) e.TrangThai = Res.StatusActive;
         }
     }
 }

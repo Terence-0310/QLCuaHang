@@ -1,73 +1,58 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using QuanLyCuaHangRuou.Common;
+using QuanLyCuaHangRuou.BLL;
 using QuanLyCuaHangRuou.DAL;
 
 namespace QuanLyCuaHangRuou.BUS
 {
     /// <summary>
-    /// Business Logic cho Báo Cáo
+    /// Business Service cho Báo Cáo (Facade cho GUI)
     /// </summary>
     public static class ReportBus
     {
+        /// <summary>
+        /// L?y báo cáo doanh thu theo kho?ng th?i gian
+        /// </summary>
         public static BusResult<List<ReportDal.DoanhThuRow>> GetDoanhThu(DateTime from, DateTime to)
         {
-            try
-            {
-                if (!AppSession.CanViewStatistics)
-                    return BusResult<List<ReportDal.DoanhThuRow>>.Fail("B?n không có quy?n xem báo cáo!");
-
-                // Validate kho?ng ngày
-                if (from > to)
-                    return BusResult<List<ReportDal.DoanhThuRow>>.Fail("Ngày b?t ??u ph?i nh? h?n ho?c b?ng ngày k?t thúc!");
-
-                // Validate kho?ng th?i gian không quá xa (t?i ?a 1 n?m)
-                if ((to - from).TotalDays > 365)
-                    return BusResult<List<ReportDal.DoanhThuRow>>.Fail("Kho?ng th?i gian báo cáo không ???c v??t quá 1 n?m!");
-
-                return BusResult<List<ReportDal.DoanhThuRow>>.Ok(ReportDal.GetDoanhThuByDateRange(from, to));
-            }
-            catch (Exception ex)
-            {
-                return BusResult<List<ReportDal.DoanhThuRow>>.Fail("L?i t?i báo cáo: " + ex.Message);
-            }
+            var (success, message, data) = ReportBll.GetDoanhThu(from, to);
+            return success 
+                ? BusResult<List<ReportDal.DoanhThuRow>>.Ok(data) 
+                : BusResult<List<ReportDal.DoanhThuRow>>.Fail(message);
         }
 
+        /// <summary>
+        /// L?y báo cáo t?n kho
+        /// </summary>
         public static BusResult<List<vw_TonKho>> GetTonKho()
         {
-            try
-            {
-                if (!AppSession.CanViewStatistics)
-                    return BusResult<List<vw_TonKho>>.Fail("B?n không có quy?n xem báo cáo!");
-
-                return BusResult<List<vw_TonKho>>.Ok(ReportDal.GetTonKho());
-            }
-            catch (Exception ex)
-            {
-                return BusResult<List<vw_TonKho>>.Fail("L?i t?i báo cáo: " + ex.Message);
-            }
+            var (success, message, data) = ReportBll.GetTonKho();
+            return success 
+                ? BusResult<List<vw_TonKho>>.Ok(data) 
+                : BusResult<List<vw_TonKho>>.Fail(message);
         }
 
+        /// <summary>
+        /// Tìm ki?m t?n kho
+        /// </summary>
         public static BusResult<List<vw_TonKho>> SearchTonKho(string keyword)
         {
-            try
-            {
-                if (!AppSession.CanViewStatistics)
-                    return BusResult<List<vw_TonKho>>.Fail("B?n không có quy?n xem báo cáo!");
-
-                return BusResult<List<vw_TonKho>>.Ok(ReportDal.SearchTonKho(keyword));
-            }
-            catch (Exception ex)
-            {
-                return BusResult<List<vw_TonKho>>.Fail("L?i tìm ki?m: " + ex.Message);
-            }
+            var (success, message, data) = ReportBll.SearchTonKho(keyword);
+            return success 
+                ? BusResult<List<vw_TonKho>>.Ok(data) 
+                : BusResult<List<vw_TonKho>>.Fail(message);
         }
 
+        /// <summary>
+        /// Tính t?ng doanh thu
+        /// </summary>
         public static decimal CalculateTotalRevenue(List<ReportDal.DoanhThuRow> data) =>
-            data?.Sum(x => x.TongTien) ?? 0;
+            ReportBll.CalculateTotalRevenue(data);
 
+        /// <summary>
+        /// Tính t?ng s? l??ng t?n kho
+        /// </summary>
         public static decimal CalculateTotalStock(List<vw_TonKho> data) =>
-            data?.Sum(x => x.SoLuongTon) ?? 0;
+            ReportBll.CalculateTotalStock(data);
     }
 }

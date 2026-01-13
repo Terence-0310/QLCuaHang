@@ -296,5 +296,10 @@ namespace QuanLyCuaHangRuou.GUI
         private void ShowError(string msg) => MessageBox.Show(this, msg, Res.Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
         private void ShowInfo(string msg) => MessageBox.Show(this, msg, Res.Info, MessageBoxButtons.OK, MessageBoxIcon.Information);
         private DialogResult Confirm(string msg) => MessageBox.Show(this, msg, Res.Confirm, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+        private void grpHinh_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
